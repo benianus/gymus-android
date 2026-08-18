@@ -1,7 +1,7 @@
 [versions]
 adaptive = "1.2.0"
-agp = "9.2.0"
-coilCompose = "3.4.0"
+agp = "9.2.1"
+coilCompose = "3.5.0"
 coreKtx = "1.18.0"
 datastorePreferences = "1.2.1"
 junit = "4.13.2"
@@ -10,17 +10,17 @@ espressoCore = "3.7.0"
 kotlinxSerializationJson = "1.11.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-kotlin = "2.3.21"
-composeBom = "2026.04.01"
-ktor = "3.4.3"
-koin = "4.2.1"
-koin-plugin = "1.0.0-RC2"
+kotlin = "2.4.0"
+composeBom = "2026.06.00"
+ktor = "3.5.2"
+koin = "4.2.2"
+koin-plugin = "1.1.0"
 material3 = "1.4.0"
 navigationCompose = "2.9.8"
 room = "2.8.4"
 sqlite = "2.6.2"
-savedstate = "1.4.0"
-paging = "3.4.2"
+savedstate = "1.5.0"
+paging = "3.5.0"
 ksp = "2.3.6"
 
 [libraries]
@@ -49,6 +49,7 @@ androidx-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", versi
 androidx-sqlite-ktx = { module = "androidx.sqlite:sqlite-ktx", version.ref = "sqlite" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
+io-insert-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 io-insert-koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 io-insert-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 io-insert-koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
@@ -77,6 +78,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

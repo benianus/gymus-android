@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.room.ksp) apply false
     alias(libs.plugins.androidx.room) apply false
+    alias(libs.plugins.koin.compiler) apply false
 }
 
 buildscript {
@@ -14,3 +15,4 @@ buildscript {
         classpath(libs.androidx.navigation.safe.args.gradle.plugin)
     }
 }
+
