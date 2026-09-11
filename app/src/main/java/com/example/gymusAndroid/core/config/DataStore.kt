@@ -12,9 +12,10 @@ val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
 val ROLE = stringPreferencesKey("role")
 val EXPIRES_IN = longPreferencesKey("expires_in")
 
+val USERNAME = stringPreferencesKey("username")
+
 val Context.AuthDataStore: DataStore<Preferences> by preferencesDataStore("auth_data")
 
-fun createAuthDataStore(context: Context): DataStore<Preferences> =
-        context.AuthDataStore
+fun createAuthDataStore(context: Context): DataStore<Preferences> = context.AuthDataStore
 
 

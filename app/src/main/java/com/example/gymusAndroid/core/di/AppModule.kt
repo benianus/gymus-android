@@ -7,6 +7,6 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { createDatabase(get()) }
-    single { createHttpClient() }
+    single { createHttpClient(get()) }
     single { createAuthDataStore(get()) }
 }

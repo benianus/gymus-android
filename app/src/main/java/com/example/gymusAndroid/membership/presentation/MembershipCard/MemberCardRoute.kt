@@ -1,4 +1,4 @@
-package com.example.gymusAndroid.membership
+package com.example.gymusAndroid.membership.presentation.MembershipCard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

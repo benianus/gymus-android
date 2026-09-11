@@ -8,27 +8,29 @@ import com.example.gymusAndroid.core.config.ACCESS_TOKEN
 import com.example.gymusAndroid.core.config.EXPIRES_IN
 import com.example.gymusAndroid.core.config.REFRESH_TOKEN
 import com.example.gymusAndroid.core.config.ROLE
+import com.example.gymusAndroid.core.config.USERNAME
 import kotlinx.coroutines.flow.map
 
-class AuthDataStore(private val authDataStore: DataStore<Preferences>) {
-    val accessToken = authDataStore.data.map { it[ACCESS_TOKEN] ?: "" }
-    val refreshToken = authDataStore.data.map { it[REFRESH_TOKEN] ?: "" }
-    val role = authDataStore.data.map { it[ROLE] ?: "" }
-    val expiresIn = authDataStore.data.map { it[EXPIRES_IN] ?: 0L }
-
+class AuthDataStore(private val dataStore: DataStore<Preferences>) {
+    val accessToken = dataStore.data.map { it[ACCESS_TOKEN] ?: "" }
+    val refreshToken = dataStore.data.map { it[REFRESH_TOKEN] ?: "" }
+    val role = dataStore.data.map { it[ROLE] ?: "" }
+    val expiresIn = dataStore.data.map { it[EXPIRES_IN] ?: 0L }
+    val username = dataStore.data.map { it[USERNAME] ?: "benianus" }
     suspend fun saveAuthData(authResponseDto: AuthResponseDto) {
-        authDataStore.updateData { preferences ->
+        dataStore.updateData { preferences ->
             preferences.toMutablePreferences().also {
                 it[ACCESS_TOKEN] = authResponseDto.accessToken
                 it[REFRESH_TOKEN] = authResponseDto.refreshToken
                 it[ROLE] = authResponseDto.role
                 it[EXPIRES_IN] = authResponseDto.expiresIn
+                it[USERNAME] = authResponseDto.username
             }
         }
     }
 
     suspend fun clearAuthData() {
-        authDataStore.edit {
+        dataStore.edit {
             it.clear()
         }
     }

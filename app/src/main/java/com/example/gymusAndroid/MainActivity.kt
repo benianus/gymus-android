@@ -18,11 +18,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GymusAppTheme {
-                val windowSizeClass =
+                val widthSizeClass =
                     calculateWindowSizeClass(this).widthSizeClass
 
                 val navController = rememberNavController()
-                AppNavHost(navController = navController)
+                AppNavHost(navController = navController, widthSizeClass = widthSizeClass)
             }
         }
     }

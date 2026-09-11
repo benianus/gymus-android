@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,26 +39,61 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginRoute(
     navController: NavHostController,
+    widthSizeClass: WindowWidthSizeClass,
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
 ) {
     val uiState by loginViewModel.uiState.collectAsState()
-    LoginScreen(
+
+    LoginCompactScreen(
         navController = navController,
         uiState = uiState,
         onUsernameChanged = loginViewModel::onUsernameChanged,
         onPasswordChanged = loginViewModel::onPasswordChanged,
         login = loginViewModel::login
     )
+
+    when (widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            LoginCompactScreen(
+                navController = navController,
+                uiState = uiState,
+                onUsernameChanged = loginViewModel::onUsernameChanged,
+                onPasswordChanged = loginViewModel::onPasswordChanged,
+                login = loginViewModel::login
+            )
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            LoginMediumScreen(
+                navController = navController,
+                uiState = uiState,
+                onUsernameChanged = loginViewModel::onUsernameChanged,
+                onPasswordChanged = loginViewModel::onPasswordChanged,
+                login = loginViewModel::login
+            )
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            LoginExpandedScreen(
+                navController = navController,
+                uiState = uiState,
+                onUsernameChanged = loginViewModel::onUsernameChanged,
+                onPasswordChanged = loginViewModel::onPasswordChanged,
+                login = loginViewModel::login
+            )
+        }
+    }
 }
 
 @Composable
-private fun LoginScreen(
+private fun LoginCompactScreen(
     navController: NavHostController,
     uiState: LoginScreenState,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     login: (String, String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     Scaffold { innerPadding ->
@@ -153,16 +189,68 @@ private fun LoginScreen(
     }
 }
 
+@Composable
+fun LoginMediumScreen(
+    navController: NavHostController,
+    uiState: LoginScreenState,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    login: (String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TODO("Not yet implemented")
+}
+
+@Composable
+fun LoginExpandedScreen(
+    navController: NavHostController,
+    uiState: LoginScreenState,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    login: (String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TODO("Not yet implemented")
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreenPreview() {
+fun LoginCompactScreenPreview() {
     GymusAppTheme {
-        LoginScreen(
+        LoginCompactScreen(
             navController = rememberNavController(),
-            LoginScreenState(),
+            uiState = LoginScreenState(),
             onUsernameChanged = {},
-            onPasswordChanged = {}
-        ) { _, _ -> }
+            onPasswordChanged = {},
+            login = { _, _ -> }
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginMediumScreenPreview() {
+    GymusAppTheme {
+        LoginMediumScreen(
+            navController = rememberNavController(),
+            uiState = LoginScreenState(),
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            login = { _, _ -> }
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginExpandedScreenPreview() {
+    GymusAppTheme {
+        LoginExpandedScreen(
+            navController = rememberNavController(),
+            uiState = LoginScreenState(),
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            login = { _, _ -> }
+        )
     }
 }

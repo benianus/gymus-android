@@ -1,5 +1,7 @@
 package com.example.gymusAndroid.core.navigation
 
+import android.util.Log
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -8,13 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.example.gymusAndroid.auth.presentation.login.LoginRoute
 import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.auth.presentation.register.RegisterRoute
 import com.example.gymusAndroid.dashboard.presentation.DashboardRoute
-import com.example.gymusAndroid.membership.MemberCardRoute
-import com.example.gymusAndroid.membership.MembershipsRoute
-import com.example.gymusAndroid.membership.RegisterMembershipRoute
+import com.example.gymusAndroid.membership.presentation.MembershipCard.MemberCardRoute
+import com.example.gymusAndroid.membership.presentation.MembershipRegister.RegisterMembershipRoute
+import com.example.gymusAndroid.membership.presentation.Memberships.MembershipsRoute
 import com.example.gymusAndroid.reports.ReportsRoute
 import com.example.gymusAndroid.session.RegisterSessionRoute
 import com.example.gymusAndroid.session.SessionsRoute
@@ -24,8 +27,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AppNavHost(
     navController: NavHostController,
+    widthSizeClass: WindowWidthSizeClass,
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+    loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>(),
 ) {
     val isAuthenticated by loginViewModel.authenticated.collectAsState()
 
@@ -41,12 +45,26 @@ fun AppNavHost(
         navController = navController,
         startDestination = if (isAuthenticated.isBlank()) Login else Dashboard
     ) {
-        composable<Login> { LoginRoute(navController = navController) }
+        composable<Login> {
+            LoginRoute(
+                navController = navController,
+                widthSizeClass = widthSizeClass
+            )
+        }
         composable<Register> { RegisterRoute(navController = navController) }
         composable<Dashboard> { DashboardRoute(navController = navController) }
-        composable<Memberships> { MembershipsRoute(navController = navController) }
+        composable<Memberships> {
+            MembershipsRoute(
+                navController = navController,
+                widthSizeClass = widthSizeClass
+            )
+        }
         composable<RegisterMembership> { RegisterMembershipRoute(navController = navController) }
-        composable<MemberCard> { MemberCardRoute(navController = navController) }
+        composable<MemberCard> {
+            val memberId = it.toRoute<MemberCard>().memberId
+            Log.i("MEMBER_ID", memberId.toString())
+            MemberCardRoute(navController = navController)
+        }
         composable<Sessions> { SessionsRoute(navController = navController) }
         composable<RegisterSession> { RegisterSessionRoute(navController = navController) }
         composable<Products> { StoreRoute(navController = navController) }

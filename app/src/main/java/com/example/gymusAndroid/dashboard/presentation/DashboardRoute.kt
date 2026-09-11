@@ -40,6 +40,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
@@ -96,7 +97,7 @@ fun RecentCheckedMember() {
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
         Card(
-            modifier = Modifier.border(1.dp, color = Color(11L)),
+            modifier = Modifier,
             border = BorderStroke(1.dp, Color.LightGray),
             elevation = CardDefaults.cardElevation(1.dp)
         ) {
@@ -111,11 +112,8 @@ fun RecentCheckedMember() {
                     contentDescription = "profile photo",
                     modifier = Modifier
                         .size(50.dp)
-//                        .background(Color.White)
-                        .clip(CircleShape)
-//                        .border(1.dp, Color.LightGray),
-                    ,
-                    contentScale = ContentScale.Fit
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small)))
                 Column(

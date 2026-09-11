@@ -72,8 +72,9 @@ dependencies {
     implementation(libs.io.ktor.client.cio)
     implementation(libs.io.ktor.client.content.negotiation)
     implementation(libs.io.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.logging)
-    testImplementation(libs.ktor.client.mock)
+    implementation(libs.io.ktor.client.logging)
+    implementation(libs.io.ktor.client.auth)
+    testImplementation(libs.io.ktor.client.mock)
 
     // room
     implementation(libs.androidx.room.runtime)
