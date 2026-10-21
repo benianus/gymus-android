@@ -3,32 +3,35 @@ package com.example.gymusAndroid.core.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Login
+sealed interface Tab
 
 @Serializable
-data object Register
+data object Login : Tab
 
 @Serializable
-data object Dashboard
+data object Register : Tab
 
 @Serializable
-data object Memberships
+data object Dashboard : Tab
 
 @Serializable
-data object RegisterMembership
+data object Memberships : Tab
 
 @Serializable
-data object Sessions
+data object RegisterMembership : Tab
 
 @Serializable
-data object RegisterSession
+data object Sessions : Tab
 
 @Serializable
-data object Products
+data object RegisterSession : Tab
 
 @Serializable
-data object Reports
+data object Products : Tab
 
 @Serializable
-data class MemberCard(val memberId: Int)
+data object Reports : Tab
+
+@Serializable
+data class MemberCard(val memberId: Int) : Tab
 

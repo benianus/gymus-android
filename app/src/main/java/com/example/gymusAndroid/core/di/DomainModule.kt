@@ -12,5 +12,5 @@ val domainModule = module {
     singleOf(::RegisterUseCase)
     singleOf(::LogoutUseCase)
 
-    single { FindAllMembersUseCase(get()) }
+    singleOf(::FindAllMembersUseCase)
 }

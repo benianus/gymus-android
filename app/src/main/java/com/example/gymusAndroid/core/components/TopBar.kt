@@ -17,7 +17,11 @@ import com.example.gymusAndroid.R
  * @param isActualScreen show the back arrow if the actual screen
  */
 @Composable
-fun TopBar(navHostController: NavHostController, isActualScreen: Boolean = false) {
+fun TopBar(
+    navHostController: NavHostController,
+    title: String = "",
+    isActualScreen: Boolean = false
+) {
     TopAppBar(
         navigationIcon = {
             if (!isActualScreen) {
@@ -32,6 +36,6 @@ fun TopBar(navHostController: NavHostController, isActualScreen: Boolean = false
             }
         },
         actions = {},
-        title = { Text("Gymus", style = MaterialTheme.typography.titleLarge) }
+        title = { Text(title, style = MaterialTheme.typography.titleLarge) }
     )
 }

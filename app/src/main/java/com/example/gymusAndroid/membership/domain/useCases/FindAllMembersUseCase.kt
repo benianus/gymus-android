@@ -6,5 +6,6 @@ import com.example.gymusAndroid.membership.domain.repostories.MembershipReposito
 class FindAllMembersUseCase(val fakeMembershipsRepository: MembershipRepository) {
     suspend operator fun invoke(page: Int = 1, pageSize: Int = 10): List<Member> {
         return fakeMembershipsRepository.findAllMembers(page, pageSize)
+            .sortedByDescending { it.createdAt }
     }
 }

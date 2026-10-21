@@ -22,6 +22,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -97,20 +98,19 @@ fun MembershipsCompactScreen(
     Scaffold(
         topBar = {
             TopBar(
+                title = "Memberships",
                 navHostController = navController,
                 isActualScreen = isMembershipScreen
             )
-
         },
         bottomBar = {
             BottomNavBar(
-                navController = navController
+                navHostController = navController
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(RegisterMembership) },
-                modifier = Modifier.size(50.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Icon(
@@ -120,7 +120,8 @@ fun MembershipsCompactScreen(
                 )
             }
         },
-        floatingActionButtonPosition = FabPosition.End
+        floatingActionButtonPosition = FabPosition.End,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
     ) { innerPadding ->
         LazyColumn(
             contentPadding = PaddingValues(dimensionResource(R.dimen.small)),

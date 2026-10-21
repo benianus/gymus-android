@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,7 +40,8 @@ import org.koin.androidx.compose.koinViewModel
 fun RegisterRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    registerViewModel: RegisterViewModel = koinViewModel<RegisterViewModel>()
+    registerViewModel: RegisterViewModel = koinViewModel<RegisterViewModel>(),
+    widthSizeClass: WindowWidthSizeClass
 ) {
     val uiState by registerViewModel.uiState.collectAsState()
     RegisterScreen(

@@ -1,16 +1,13 @@
 package com.example.gymusAndroid.core.navigation
 
-import android.util.Log
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.example.gymusAndroid.auth.presentation.login.LoginRoute
 import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.auth.presentation.register.RegisterRoute
@@ -33,17 +30,19 @@ fun AppNavHost(
 ) {
     val isAuthenticated by loginViewModel.authenticated.collectAsState()
 
-    LaunchedEffect(isAuthenticated) {
-        if (isAuthenticated.isBlank()) {
-            navController.navigate(Login) { popUpTo(0) { inclusive = true } }
-        } else {
-            navController.navigate(Dashboard) { popUpTo(0) { inclusive = true } }
-        }
-    }
+//    LaunchedEffect(isAuthenticated) {
+//        if (isAuthenticated.isBlank()) {
+//            navController.navigate(Login) { popUpTo(0) { inclusive = true } }
+//        } else {
+//            navController.navigate(Dashboard) { popUpTo(0) { inclusive = true } }
+//        }
+//    }
+
+    // TODO("make 'if (isAuthenticated.isBlank()) Login else Dashboard' in the start destination later")
 
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated.isBlank()) Login else Dashboard
+        startDestination = Dashboard
     ) {
         composable<Login> {
             LoginRoute(
@@ -51,23 +50,68 @@ fun AppNavHost(
                 widthSizeClass = widthSizeClass
             )
         }
-        composable<Register> { RegisterRoute(navController = navController) }
-        composable<Dashboard> { DashboardRoute(navController = navController) }
+
+        composable<Register> {
+            RegisterRoute(
+                navController = navController,
+                widthSizeClass = widthSizeClass
+            )
+        }
+
+        composable<Dashboard> {
+            DashboardRoute(
+                navController = navController,
+                widthSizeClass = widthSizeClass
+            )
+        }
+
         composable<Memberships> {
             MembershipsRoute(
                 navController = navController,
                 widthSizeClass = widthSizeClass
             )
         }
-        composable<RegisterMembership> { RegisterMembershipRoute(navController = navController) }
-        composable<MemberCard> {
-            val memberId = it.toRoute<MemberCard>().memberId
-            Log.i("MEMBER_ID", memberId.toString())
-            MemberCardRoute(navController = navController)
+
+        composable<RegisterMembership> {
+            RegisterMembershipRoute(
+                widthSizeClass = widthSizeClass,
+                navController = navController
+            )
         }
-        composable<Sessions> { SessionsRoute(navController = navController) }
-        composable<RegisterSession> { RegisterSessionRoute(navController = navController) }
-        composable<Products> { StoreRoute(navController = navController) }
-        composable<Reports> { ReportsRoute(navController = navController) }
+
+        composable<MemberCard> {
+            MemberCardRoute(
+                widthSizeClass = widthSizeClass,
+                navHostController = navController
+            )
+        }
+
+        composable<Sessions> {
+            SessionsRoute(
+                widthSizeClass = widthSizeClass,
+                navController = navController
+            )
+        }
+
+        composable<RegisterSession> {
+            RegisterSessionRoute(
+                widthSizeClass = widthSizeClass,
+                navController = navController
+            )
+        }
+
+        composable<Products> {
+            StoreRoute(
+                widthSizeClass = widthSizeClass,
+                navController = navController
+            )
+        }
+
+        composable<Reports> {
+            ReportsRoute(
+                widthSizeClass = widthSizeClass,
+                navController = navController
+            )
+        }
     }
 }

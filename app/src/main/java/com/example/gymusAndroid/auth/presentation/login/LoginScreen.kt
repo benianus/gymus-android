@@ -174,12 +174,7 @@ private fun LoginCompactScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Blue,
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate(
-                                Register
-                            )
-                        }
+                    modifier = Modifier.clickable { navController.navigate(Register) }
                 )
             }
         }
