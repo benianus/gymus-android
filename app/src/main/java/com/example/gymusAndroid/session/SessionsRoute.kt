@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
-import com.example.gymusAndroid.core.navigation.RegisterSession
+import com.example.gymusAndroid.core.navigation.RegisterSessionScreen
 
 @Composable
 fun SessionsRoute(
@@ -22,7 +22,10 @@ fun SessionsRoute(
 ) {
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            SessionsCompactScreen(navController = navController, modifier = Modifier)
+            SessionsCompactScreen(
+                navController = navController,
+                modifier = Modifier
+            )
         }
 
         WindowWidthSizeClass.Medium -> {
@@ -46,7 +49,10 @@ fun SessionsMediumScreen(modifier: Modifier.Companion) {
 }
 
 @Composable
-fun SessionsCompactScreen(navController: NavHostController, modifier: Modifier.Companion) {
+fun SessionsCompactScreen(
+    navController: NavHostController,
+    modifier: Modifier.Companion
+) {
     Scaffold(
         topBar = {
             TopBar(
@@ -58,7 +64,7 @@ fun SessionsCompactScreen(navController: NavHostController, modifier: Modifier.C
         bottomBar = { BottomNavBar(navHostController = navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(RegisterSession) },
+                onClick = { navController.navigate(RegisterSessionScreen) },
                 content = {
                     Icon(
                         painter = painterResource(R.drawable.baseline_add_24),

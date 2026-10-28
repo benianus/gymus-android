@@ -1,6 +1,8 @@
 package com.example.gymusAndroid.membership.presentation.MembershipRegister
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,7 +18,10 @@ fun RegisterMembershipRoute(
 ) {
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            RegisterMembershipCompactScreen(navController = navController, modifier = Modifier)
+            RegisterMembershipCompactScreen(
+                navController = navController,
+                modifier = Modifier
+            )
         }
 
         WindowWidthSizeClass.Medium -> {
@@ -30,12 +35,12 @@ fun RegisterMembershipRoute(
 }
 
 @Composable
-fun RegisterMembershipExpandedScreen(modifier: Modifier.Companion) {
+fun RegisterMembershipExpandedScreen(modifier: Modifier = Modifier) {
     TODO("Not yet implemented")
 }
 
 @Composable
-fun RegisterMembershipMediumScreen(modifier: Modifier.Companion) {
+fun RegisterMembershipMediumScreen(modifier: Modifier = Modifier) {
     TODO("Not yet implemented")
 }
 
@@ -55,5 +60,7 @@ fun RegisterMembershipCompactScreen(
         bottomBar = {
             BottomNavBar(navHostController = navController)
         }
-    ) { }
+    ) { innerPadding ->
+        Text("Register Membership", modifier = modifier.padding(innerPadding))
+    }
 }

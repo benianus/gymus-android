@@ -2,7 +2,7 @@ package com.example.gymusAndroid.dashboard.domain.models
 
 data class Member(
     val fullName: String,
-    val status: Boolean,
+    val status: String,
     val checkedInAt: String,
-    val profilePhoto: String,
+    val personalPhoto: String,
 )

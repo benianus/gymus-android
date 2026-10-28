@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 class AuthDataStore(private val dataStore: DataStore<Preferences>) {
     val accessToken = dataStore.data.map { it[ACCESS_TOKEN] ?: "" }
     val refreshToken = dataStore.data.map { it[REFRESH_TOKEN] ?: "" }
-    val role = dataStore.data.map { it[ROLE] ?: "" }
+    val role = dataStore.data.map { it[ROLE] ?: "OWNER" }
     val expiresIn = dataStore.data.map { it[EXPIRES_IN] ?: 0L }
     val username = dataStore.data.map { it[USERNAME] ?: "benianus" }
     suspend fun saveAuthData(authResponseDto: AuthResponseDto) {

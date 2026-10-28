@@ -31,7 +31,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.ShowErrorMessage
-import com.example.gymusAndroid.core.navigation.Login
+import com.example.gymusAndroid.core.navigation.LoginScreen
 import com.example.gymusAndroid.core.theme.GymusAppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -112,7 +112,13 @@ private fun RegisterScreen(
                 placeholder = { Text("Confirm your password") },
                 visualTransformation = PasswordVisualTransformation(),
                 isError = uiState.passwordConfirmationError != null,
-                supportingText = { uiState.passwordConfirmationError?.let { Text(it) } }
+                supportingText = {
+                    uiState.passwordConfirmationError?.let {
+                        Text(
+                            it
+                        )
+                    }
+                }
             )
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
             Button(
@@ -147,7 +153,7 @@ private fun RegisterScreen(
                     modifier = Modifier
                         .clickable {
                             navController.navigate(
-                                Login
+                                LoginScreen
                             )
                         }
                 )

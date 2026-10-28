@@ -6,32 +6,32 @@ import kotlinx.serialization.Serializable
 sealed interface Tab
 
 @Serializable
-data object Login : Tab
+data object LoginScreen : Tab
 
 @Serializable
-data object Register : Tab
+data object RegisterScreen : Tab
 
 @Serializable
-data object Dashboard : Tab
+data object DashboardScreen : Tab
 
 @Serializable
-data object Memberships : Tab
+data object MembershipsScreen : Tab
 
 @Serializable
-data object RegisterMembership : Tab
+data object RegisterMembershipScreen : Tab
 
 @Serializable
-data object Sessions : Tab
+data object SessionsScreen : Tab
 
 @Serializable
-data object RegisterSession : Tab
+data object RegisterSessionScreen : Tab
 
 @Serializable
-data object Products : Tab
+data object ProductsScreen : Tab
 
 @Serializable
-data object Reports : Tab
+data object ReportsScreen : Tab
 
 @Serializable
-data class MemberCard(val memberId: Int) : Tab
+data class MemberCardScreen(val memberId: Int) : Tab
 

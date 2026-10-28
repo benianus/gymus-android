@@ -32,7 +32,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.ShowErrorMessage
-import com.example.gymusAndroid.core.navigation.Register
+import com.example.gymusAndroid.core.navigation.RegisterScreen
 import com.example.gymusAndroid.core.theme.GymusAppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -174,13 +174,17 @@ private fun LoginCompactScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Blue,
-                    modifier = Modifier.clickable { navController.navigate(Register) }
+                    modifier = Modifier.clickable {
+                        navController.navigate(
+                            RegisterScreen
+                        )
+                    }
                 )
             }
         }
 
         // if error screen updated show error message toast
-        ShowErrorMessage(uiState.error)
+        ShowErrorMessage(uiState.errors)
     }
 }
 

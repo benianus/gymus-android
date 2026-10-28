@@ -1,10 +1,13 @@
 package com.example.gymusAndroid.membership.data.repositoriesImpl
 
+import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberRegisterRequestDto
+import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberUpdateRequestDto
 import com.example.gymusAndroid.membership.domain.models.Member
+import com.example.gymusAndroid.membership.domain.models.MemberCard
 import com.example.gymusAndroid.membership.domain.repostories.MembershipRepository
 import kotlin.time.Clock
 
-class FakeMembershipsRepository : MembershipRepository {
+class FakeMembershipsRepositoryImpl : MembershipRepository {
     private val members = mutableListOf(
         Member(
             id = 1,
@@ -231,32 +234,50 @@ class FakeMembershipsRepository : MembershipRepository {
             isActive = true
         )
     )
+    private val memberCards = mutableListOf(
+        MemberCard(
+            id = 1,
+            firstName = "Mohamed",
+            lastName = "BENIANE",
+            birthDate = "11-02-1194",
+            joinDate = "10-09-2026",
+            endDate = "11-06-2026",
+            personalPhoto = "photo"
+        )
+    )
 
-    override suspend fun findAllMembers(page: Int, pageSize: Int): List<Member> {
+    override suspend fun findAllMembers(
+        page: Int,
+        pageSize: Int
+    ): List<Member> {
         return this.members
     }
 
-    override suspend fun registerMember() {
+    override suspend fun registerMember(memberRegisterRequestDto: MemberRegisterRequestDto) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun recordAttendance() {
+    override suspend fun recordAttendance(memberId: Int) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun renewMembership() {
+    override suspend fun renewMembership(memberId: Int) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findMemberCard() {
+    override suspend fun findMemberCard(memberId: Int): MemberCard? {
+        return this.memberCards.firstOrNull { it.id == memberId }
+    }
+
+    override suspend fun updateMember(
+        memberId: Int,
+        memberUpdateRequestDto: MemberUpdateRequestDto
+    ) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateMember() {
+    override suspend fun deleteMember(memberId: Int) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteMember() {
-        TODO("Not yet implemented")
-    }
 }

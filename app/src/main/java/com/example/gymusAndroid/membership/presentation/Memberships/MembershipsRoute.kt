@@ -1,5 +1,6 @@
 package com.example.gymusAndroid.membership.presentation.Memberships
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -48,9 +49,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
-import com.example.gymusAndroid.core.navigation.MemberCard
-import com.example.gymusAndroid.core.navigation.Memberships
-import com.example.gymusAndroid.core.navigation.RegisterMembership
+import com.example.gymusAndroid.core.navigation.MemberCardScreen
+import com.example.gymusAndroid.core.navigation.MembershipsScreen
+import com.example.gymusAndroid.core.navigation.RegisterMembershipScreen
 import com.example.gymusAndroid.core.theme.GymusAppTheme
 import com.example.gymusAndroid.membership.domain.models.Member
 import org.koin.compose.viewmodel.koinViewModel
@@ -59,8 +60,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MembershipsRoute(
     widthSizeClass: WindowWidthSizeClass,
     navController: NavHostController,
-    membershipsViewModel: MembershipsViewModel = koinViewModel<MembershipsViewModel>(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    membershipsViewModel: MembershipsViewModel = koinViewModel(),
 ) {
     val uiState by membershipsViewModel.uiState.collectAsState()
 
@@ -91,7 +92,8 @@ fun MembershipsCompactScreen(
     navController: NavHostController,
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val isMembershipScreen = backStackEntry?.destination?.hasRoute<Memberships>() ?: false
+    val isMembershipScreen =
+            backStackEntry?.destination?.hasRoute<MembershipsScreen>() ?: false
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -110,7 +112,7 @@ fun MembershipsCompactScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(RegisterMembership) },
+                onClick = { navController.navigate(RegisterMembershipScreen) },
                 shape = MaterialTheme.shapes.medium
             ) {
                 Icon(
@@ -132,8 +134,9 @@ fun MembershipsCompactScreen(
                     modifier = Modifier
                         .padding(bottom = dimensionResource(R.dimen.medium))
                         .clickable {
+                            Log.i("member_id", member.id.toString())
                             navController.navigate(
-                                MemberCard(member.id)
+                                MemberCardScreen(member.id)
                             )
                         },
                     border = BorderStroke(1.dp, Color.LightGray),
@@ -191,6 +194,9 @@ fun MembershipsExpandedScreen() {
 @Preview(showBackground = true, showSystemUi = true)
 fun MembershipsCompactScreenPreview() {
     GymusAppTheme {
-        MembershipsCompactScreen(members = emptyList(), navController = rememberNavController())
+        MembershipsCompactScreen(
+            members = emptyList(),
+            navController = rememberNavController()
+        )
     }
 }

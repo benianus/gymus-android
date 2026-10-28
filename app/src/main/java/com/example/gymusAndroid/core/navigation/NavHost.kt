@@ -42,72 +42,72 @@ fun AppNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Dashboard
+        startDestination = DashboardScreen
     ) {
-        composable<Login> {
+        composable<LoginScreen> {
             LoginRoute(
                 navController = navController,
                 widthSizeClass = widthSizeClass
             )
         }
 
-        composable<Register> {
+        composable<RegisterScreen> {
             RegisterRoute(
                 navController = navController,
                 widthSizeClass = widthSizeClass
             )
         }
 
-        composable<Dashboard> {
+        composable<DashboardScreen> {
             DashboardRoute(
                 navController = navController,
                 widthSizeClass = widthSizeClass
             )
         }
 
-        composable<Memberships> {
+        composable<MembershipsScreen> {
             MembershipsRoute(
                 navController = navController,
                 widthSizeClass = widthSizeClass
             )
         }
 
-        composable<RegisterMembership> {
+        composable<RegisterMembershipScreen> {
             RegisterMembershipRoute(
                 widthSizeClass = widthSizeClass,
                 navController = navController
             )
         }
 
-        composable<MemberCard> {
+        composable<MemberCardScreen> {
             MemberCardRoute(
                 widthSizeClass = widthSizeClass,
                 navHostController = navController
             )
         }
 
-        composable<Sessions> {
+        composable<SessionsScreen> {
             SessionsRoute(
                 widthSizeClass = widthSizeClass,
                 navController = navController
             )
         }
 
-        composable<RegisterSession> {
+        composable<RegisterSessionScreen> {
             RegisterSessionRoute(
                 widthSizeClass = widthSizeClass,
                 navController = navController
             )
         }
 
-        composable<Products> {
+        composable<ProductsScreen> {
             StoreRoute(
                 widthSizeClass = widthSizeClass,
                 navController = navController
             )
         }
 
-        composable<Reports> {
+        composable<ReportsScreen> {
             ReportsRoute(
                 widthSizeClass = widthSizeClass,
                 navController = navController

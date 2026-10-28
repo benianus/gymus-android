@@ -1,4 +1,7 @@
 package com.example.gymusAndroid.dashboard.domain.useCases
 
-class RecentCheckInsUseCase {
+import com.example.gymusAndroid.dashboard.domain.repositories.DashboardRepository
+
+class RecentCheckInsUseCase(private val dashboardRepository: DashboardRepository) {
+    suspend operator fun invoke() = dashboardRepository.getRecentCheckIns()
 }

@@ -24,57 +24,61 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
-fun createHttpClient(authDataStore: AuthDataStore): HttpClient = HttpClient(CIO) {
-    install(ContentNegotiation) {
-        json(Json {
-            ignoreUnknownKeys = true
-            prettyPrint = true
-        })
-    }
-
-    install(Logging) {
-        logger = Logger.ANDROID
-        level = LogLevel.ALL
-    }
-
-    install(Auth) {
-        bearer {
-            loadTokens {
-                BearerTokens(
-                    authDataStore.accessToken.first(),
-                    authDataStore.refreshToken.first()
-                )
+fun createHttpClient(authDataStore: AuthDataStore): HttpClient =
+        HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                    prettyPrint = true
+                })
             }
 
-            refreshTokens {
-                val refreshTokenResponse = client.post("${BASE_URL}/auth/refresh") {
-                    markAsRefreshTokenRequest()
-                    contentType(ContentType.Application.Json)
-                    setBody(
-                        RefreshTokenRequestDto(
-                            username = authDataStore.username.first(),
-                            refreshToken = oldTokens?.refreshToken ?: ""
-                        )
-                    )
-                }
+            install(Logging) {
+                logger = Logger.ANDROID
+                level = LogLevel.ALL
+            }
 
-                val newTokens = refreshTokenResponse.body<RefreshTokenResponseDto>()
-
-                BearerTokens(
-                    newTokens.accessToken,
-                    newTokens.refreshToken
-                ).also {
-                    authDataStore.saveAuthData(
-                        authResponseDto = AuthResponseDto(
-                            accessToken = it.accessToken,
-                            refreshToken = it.refreshToken ?: "",
-                            username = "",
-                            role = "",
-                            expiresIn = 3L
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(
+                            authDataStore.accessToken.first(),
+                            authDataStore.refreshToken.first()
                         )
-                    )
+                    }
+
+                    refreshTokens {
+                        val refreshTokenResponse =
+                                client.post("${BASE_URL}/auth/refresh") {
+                                    markAsRefreshTokenRequest()
+                                    contentType(ContentType.Application.Json)
+                                    setBody(
+                                        RefreshTokenRequestDto(
+                                            username = authDataStore.username.first(),
+                                            refreshToken = oldTokens?.refreshToken
+                                                           ?: ""
+                                        )
+                                    )
+                                }
+
+                        val newTokens =
+                                refreshTokenResponse.body<RefreshTokenResponseDto>()
+
+                        BearerTokens(
+                            newTokens.accessToken,
+                            newTokens.refreshToken
+                        ).also {
+                            authDataStore.saveAuthData(
+                                authResponseDto = AuthResponseDto(
+                                    accessToken = it.accessToken,
+                                    refreshToken = it.refreshToken ?: "",
+                                    username = "",
+                                    role = "",
+                                    expiresIn = 3L
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}

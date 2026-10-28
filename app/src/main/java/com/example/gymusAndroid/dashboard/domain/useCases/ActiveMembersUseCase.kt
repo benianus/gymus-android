@@ -1,4 +1,7 @@
 package com.example.gymusAndroid.dashboard.domain.useCases
 
-class ActiveMembersUseCase {
+import com.example.gymusAndroid.dashboard.domain.repositories.DashboardRepository
+
+class ActiveMembersUseCase(private val dashboardRepository: DashboardRepository) {
+    suspend operator fun invoke(): Int = dashboardRepository.getActiveMembers()
 }

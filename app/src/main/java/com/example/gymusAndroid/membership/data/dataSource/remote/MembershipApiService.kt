@@ -17,6 +17,10 @@ interface MembershipApiService {
     suspend fun recordAttendance(memberId: Int)
     suspend fun renewMembership(memberId: Int)
     suspend fun findMemberCard(memberId: Int): ApiResponse<MemberCardResponseDto>
-    suspend fun updateMember(memberId: Int, memberUpdateRequestDto: MemberUpdateRequestDto)
+    suspend fun updateMember(
+        memberId: Int,
+        memberUpdateRequestDto: MemberUpdateRequestDto
+    )
+
     suspend fun deleteMember(memberId: Int)
 }

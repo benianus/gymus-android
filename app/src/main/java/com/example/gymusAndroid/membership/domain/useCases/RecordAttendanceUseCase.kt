@@ -1,7 +1,9 @@
 package com.example.gymusAndroid.membership.domain.useCases
 
-class RecordAttendanceUseCase {
-    suspend operator fun invoke() {
+import com.example.gymusAndroid.membership.domain.repostories.MembershipRepository
+
+class RecordAttendanceUseCase(private val membershipRepository: MembershipRepository) {
+    suspend operator fun invoke(memberId: Int) {
         TODO()
     }
 }

@@ -8,7 +8,8 @@ import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.responses
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.responses.MemberResponseDto
 import io.ktor.client.HttpClient
 
-class MembershipApiServiceImpl(val httpClient: HttpClient) : MembershipApiService {
+class MembershipApiServiceImpl(val httpClient: HttpClient) :
+    MembershipApiService {
     override suspend fun findAllMembers(
         page: Int,
         pageSize: Int
@@ -42,4 +43,5 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) : MembershipApiServic
     override suspend fun deleteMember(memberId: Int) {
         TODO("Not yet implemented")
     }
+
 }

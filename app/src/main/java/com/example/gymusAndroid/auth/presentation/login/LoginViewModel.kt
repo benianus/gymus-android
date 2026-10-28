@@ -34,7 +34,7 @@ class LoginViewModel(
                 uiState.update {
                     it.copy(
                         loading = false,
-                        error = throwable.message
+                        errors = listOf(throwable.message ?: "Unknown error")
                     )
                 }
             }
@@ -51,7 +51,12 @@ class LoginViewModel(
             }
 
             else -> {
-                uiState.update { it.copy(username = username, usernameError = null) }
+                uiState.update {
+                    it.copy(
+                        username = username,
+                        usernameError = null
+                    )
+                }
             }
         }
     }
@@ -68,7 +73,12 @@ class LoginViewModel(
             }
 
             else -> {
-                uiState.update { it.copy(password = password, passwordError = null) }
+                uiState.update {
+                    it.copy(
+                        password = password,
+                        passwordError = null
+                    )
+                }
             }
         }
     }
@@ -76,7 +86,7 @@ class LoginViewModel(
     fun login(username: String, password: String) {
         uiState.update { it.copy(loading = true) }
 
-        val job = viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val result = loginUseCase(
                 User(
                     id = 0,
@@ -88,19 +98,25 @@ class LoginViewModel(
                 )
             )
 
-            if (result == null) {
+            if (result.data != null) {
                 uiState.update { it.copy(loading = false) }
             } else {
-                uiState.update { it.copy(loading = false, error = result) }
+                uiState.update {
+                    it.copy(
+                        loading = false,
+                        errors = result.errors
+                    )
+                }
             }
         }
 
     }
 
     fun logout() {
+
         uiState.update {
             it.copy(
-                loading = true
+                loading = true,
             )
         }
 

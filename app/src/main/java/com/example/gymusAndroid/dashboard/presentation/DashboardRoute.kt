@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,23 +45,32 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
-import com.example.gymusAndroid.core.navigation.Dashboard
-import com.example.gymusAndroid.core.navigation.Memberships
-import com.example.gymusAndroid.core.navigation.Products
-import com.example.gymusAndroid.core.navigation.RegisterMembership
-import com.example.gymusAndroid.core.navigation.RegisterSession
-import com.example.gymusAndroid.core.navigation.Reports
-import com.example.gymusAndroid.core.navigation.Sessions
+import com.example.gymusAndroid.core.navigation.DashboardScreen
+import com.example.gymusAndroid.core.navigation.MembershipsScreen
+import com.example.gymusAndroid.core.navigation.ProductsScreen
+import com.example.gymusAndroid.core.navigation.RegisterMembershipScreen
+import com.example.gymusAndroid.core.navigation.RegisterSessionScreen
+import com.example.gymusAndroid.core.navigation.ReportsScreen
+import com.example.gymusAndroid.core.navigation.SessionsScreen
 import com.example.gymusAndroid.core.theme.GymusAppTheme
+import com.example.gymusAndroid.dashboard.domain.models.Member
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun DashboardRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    widthSizeClass: WindowWidthSizeClass
+    widthSizeClass: WindowWidthSizeClass,
+    dashboardViewModel: DashboardViewModel = koinViewModel()
 ) {
+    var uiState = dashboardViewModel.uiState.collectAsState()
+    
     when (widthSizeClass) {
-        WindowWidthSizeClass.Compact -> DashboardCompactScreen(navController = navController)
+        WindowWidthSizeClass.Compact -> DashboardCompactScreen(
+            navController = navController,
+            uiState = uiState
+        )
+
         WindowWidthSizeClass.Medium -> DashboardMediumScreen(navController = navController)
         WindowWidthSizeClass.Expanded -> DashboardExpandedScreen(navController = navController)
     }
@@ -78,12 +88,13 @@ fun DashboardMediumScreen(navController: NavHostController) {
 
 @Composable
 fun DashboardCompactScreen(
+    uiState: DashboardScreenState,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val isDashboardScreen = backStackEntry?.destination
-                                ?.hasRoute<Dashboard>() ?: false
+                                ?.hasRoute<DashboardScreen>() ?: false
     Scaffold(
         topBar = {
             TopBar(
@@ -102,7 +113,7 @@ fun DashboardCompactScreen(
         ) {
             item {
                 Text(
-                    text = "Hello, Admin",
+                    text = "Hello, ${uiState.role}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -113,18 +124,26 @@ fun DashboardCompactScreen(
                 )
             }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
-            item { SummaryItems() }
+            item {
+                SummaryItems(
+                    uiState = uiState,
+                    modifier = Modifier
+                )
+            }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
             item { QuickAccessItems(navController = navController) }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
-            item { RecentCheckedMember() }
+            item { RecentCheckedMember(uiState = uiState, modifier = Modifier) }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
         }
     }
 }
 
 @Composable
-fun RecentCheckedMember() {
+fun RecentCheckedMember(
+    uiState: DashboardScreenState,
+    modifier: Modifier = Modifier
+) {
     Column {
         Text(
             text = "Recent check-ins",
@@ -132,19 +151,33 @@ fun RecentCheckedMember() {
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
-        RecentCheckedMemberItem(
-            modifier = Modifier.padding(
-                bottom = dimensionResource(
-                    R.dimen.medium
+        if (uiState.members.isNotEmpty()) {
+            for (member in uiState.members) {
+                RecentCheckedMemberItem(
+                    member = member,
+                    modifier = Modifier.padding(
+                        bottom = dimensionResource(
+                            R.dimen.small
+                        )
+                    )
                 )
+            }
+        } else {
+            Text(
+                text = "No recent check-ins!",
+                modifier = Modifier
+                    .fillMaxWidth(),
             )
-        )
-        RecentCheckedMemberItem()
+        }
+
     }
 }
 
 @Composable
-private fun RecentCheckedMemberItem(modifier: Modifier = Modifier) {
+private fun RecentCheckedMemberItem(
+    member: Member,
+    modifier: Modifier = Modifier,
+) {
     Card(
         modifier = modifier,
         border = BorderStroke(1.dp, Color.LightGray),
@@ -169,27 +202,38 @@ private fun RecentCheckedMemberItem(modifier: Modifier = Modifier) {
                 modifier = Modifier.weight(2f),
             ) {
                 Text(
-                    text = "Mohamed BENIANE",
+                    text = member.fullName,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Active member",
+                    text = "${member.status} member",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Normal
                 )
             }
-            Text(text = "10:00 AM", modifier = Modifier)
+            Text(text = member.checkedInAt, modifier = Modifier)
         }
     }
 }
 
 @Composable
-private fun SummaryItems(modifier: Modifier = Modifier) {
+private fun SummaryItems(
+    uiState: DashboardScreenState,
+    modifier: Modifier = Modifier
+) {
     Row {
-        SummaryItem("Active members", "250", Modifier.weight(1f))
+        SummaryItem(
+            "Active members",
+            "${uiState.activeMembers}",
+            Modifier.weight(1f)
+        )
         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
-        SummaryItem("Today's revenue", "10000 DZD", Modifier.weight(1f))
+        SummaryItem(
+            "Today's revenue",
+            "${uiState.todayRevenue}",
+            Modifier.weight(1f)
+        )
     }
 }
 
@@ -233,7 +277,7 @@ private fun QuickAccessItems(
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
         Row {
             QuickAccessItem(
-                { navController.navigate(Memberships) },
+                { navController.navigate(MembershipsScreen) },
                 R.drawable.baseline_person_24,
                 "Memberships",
                 "memberships",
@@ -241,7 +285,7 @@ private fun QuickAccessItems(
             )
             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
-                { navController.navigate(Sessions) },
+                { navController.navigate(SessionsScreen) },
                 R.drawable.baseline_access_time_filled_24,
                 "Sessions",
                 "sessions",
@@ -251,7 +295,7 @@ private fun QuickAccessItems(
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
         Row {
             QuickAccessItem(
-                { navController.navigate(Products) },
+                { navController.navigate(ProductsScreen) },
                 icon = R.drawable.baseline_store_24,
                 title = "Store",
                 contentDescription = "store",
@@ -259,7 +303,7 @@ private fun QuickAccessItems(
             )
             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
-                { navController.navigate(Reports) },
+                { navController.navigate(ReportsScreen) },
                 R.drawable.baseline_assessment_24,
                 "Reports",
                 "reports",
@@ -269,7 +313,7 @@ private fun QuickAccessItems(
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
         Row {
             QuickAccessItem(
-                { navController.navigate(RegisterMembership) },
+                { navController.navigate(RegisterMembershipScreen) },
                 icon = R.drawable.baseline_person_add_24,
                 title = "Register member",
                 contentDescription = "register member",
@@ -277,7 +321,7 @@ private fun QuickAccessItems(
             )
             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
-                { navController.navigate(RegisterSession) },
+                { navController.navigate(RegisterSessionScreen) },
                 R.drawable.baseline_more_time_24,
                 "Register session",
                 "register session",
@@ -315,6 +359,9 @@ private fun QuickAccessItem(
 @Composable
 fun DashboardCompactScreenPreview() {
     GymusAppTheme {
-        DashboardCompactScreen(navController = rememberNavController())
+        DashboardCompactScreen(
+            uiState = DashboardScreenState(),
+            navController = rememberNavController()
+        )
     }
 }

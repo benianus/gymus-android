@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MembershipsViewModel(private val findAllMembersUseCase: FindAllMembersUseCase) : ViewModel() {
+class MembershipsViewModel(private val findAllMembersUseCase: FindAllMembersUseCase) :
+    ViewModel() {
 
     val uiState: StateFlow<MembershipsScreenState>
             field = MutableStateFlow(MembershipsScreenState())

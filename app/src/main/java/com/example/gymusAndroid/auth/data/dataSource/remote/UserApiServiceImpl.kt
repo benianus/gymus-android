@@ -1,9 +1,8 @@
 package com.example.gymusAndroid.auth.data.dataSource.remote
 
-import android.util.Log
 import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.LoginRequestDto
-import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.RefreshTokenRequestDto
+import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.LogoutRequestDto
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.RegisterRequestDto
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.response.AuthResponseDto
 import com.example.gymusAndroid.core.BASE_URL
@@ -21,30 +20,33 @@ class UserApiServiceImpl(
     private val httpClient: HttpClient,
     private val authDataStore: AuthDataStore
 ) : UserApiService {
-    override suspend fun login(loginRequestDto: LoginRequestDto): String? {
+    override suspend fun login(loginRequestDto: LoginRequestDto): ApiResponse<AuthResponseDto> {
         try {
             val response = httpClient.post("${BASE_URL}/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(loginRequestDto)
             }
 
-            return if (response.status == HttpStatusCode.OK) {
-                val data = response.body<ApiResponse<AuthResponseDto>>().data
-                Log.e("DATA", data.toString())
-                response.body<ApiResponse<AuthResponseDto>>().data?.let {
-                    authDataStore.saveAuthData(it)
+            return when (response.status) {
+                HttpStatusCode.OK -> {
+                    response.body()
                 }
-                null
-            } else {
-                "Bad credentials"
+
+                else -> {
+                    response.body()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return "Bad credentials"
+            return ApiResponse(
+                data = null,
+                errors = listOf(e.message.toString()),
+                status = "error"
+            )
         }
     }
 
-    override suspend fun register(registerRequestDto: RegisterRequestDto): String? {
+    override suspend fun register(registerRequestDto: RegisterRequestDto): ApiResponse<AuthResponseDto> {
         try {
             val response =
                     httpClient.post("${BASE_URL}/auth/register") {
@@ -53,26 +55,48 @@ class UserApiServiceImpl(
                     }
             return when (response.status) {
                 HttpStatusCode.OK -> {
-                    response.body<ApiResponse<AuthResponseDto>>().data?.let {
-                        authDataStore.saveAuthData(it)
-                    }
-                    null
+                    response.body()
                 }
 
                 else -> {
-                    val errors = response.body<ApiResponse<Any>>().errors
-                    Log.i("LOGIN_STATUS", errors.toString())
-                    "Registration failed"
+                    response.body()
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return "Registration failed"
+            return ApiResponse(
+                data = null,
+                errors = listOf(e.message.toString()),
+                status = "error"
+            )
         }
     }
 
-    override suspend fun logout(logoutRefreshTokenRequestDto: RefreshTokenRequestDto) {
-        httpClient.clearAuthTokens()
-        authDataStore.clearAuthData()
+    override suspend fun logout(logoutRequestDto: LogoutRequestDto): ApiResponse<String> {
+        return try {
+            val response = httpClient.post("${BASE_URL}/auth/register") {
+                contentType(ContentType.Application.Json)
+                setBody(logoutRequestDto)
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    httpClient.clearAuthTokens()
+                    authDataStore.clearAuthData()
+                    response.body()
+                }
+
+                else -> {
+                    response.body()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ApiResponse(
+                data = null,
+                errors = listOf(e.message.toString()),
+                status = "error"
+            )
+        }
     }
 }
