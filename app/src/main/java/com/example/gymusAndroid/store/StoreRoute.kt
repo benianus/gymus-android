@@ -19,18 +19,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun StoreRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    widthSizeClass: WindowWidthSizeClass
+    widthSizeClass: WindowWidthSizeClass,
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            StoreCompactScreen(navController = navController, modifier = Modifier)
+            StoreCompactScreen(
+                onClickLogout = loginViewModel::logout,
+                navController = navController,
+                modifier = Modifier
+            )
         }
 
         WindowWidthSizeClass.Medium -> {
@@ -45,12 +52,12 @@ fun StoreRoute(
 }
 
 @Composable
-fun StoreExpandedScreen(modifier: Modifier.Companion) {
+fun StoreExpandedScreen(modifier: Modifier) {
     TODO("Not yet implemented")
 }
 
 @Composable
-fun StoreMediumScreen(modifier: Modifier.Companion) {
+fun StoreMediumScreen(modifier: Modifier) {
     TODO("Not yet implemented")
 }
 
@@ -59,11 +66,16 @@ fun StoreMediumScreen(modifier: Modifier.Companion) {
     ExperimentalFlexBoxApi::class
 )
 @Composable
-fun StoreCompactScreen(navController: NavHostController, modifier: Modifier.Companion) {
+fun StoreCompactScreen(
+    navController: NavHostController,
+    modifier: Modifier,
+    onClickLogout: () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
-    val styleState = rememberUpdatedStyleState(interactionSource = interactionSource) {
-        it.isEnabled = true
-    }
+    val styleState =
+            rememberUpdatedStyleState(interactionSource = interactionSource) {
+                it.isEnabled = true
+            }
     val style = Style {
 
     }
@@ -71,6 +83,7 @@ fun StoreCompactScreen(navController: NavHostController, modifier: Modifier.Comp
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 navHostController = navController,
                 title = "Store",
                 isActualScreen = true

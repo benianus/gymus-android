@@ -8,6 +8,7 @@ import kotlinx.datetime.format.char
 
 fun RecentMemberChecksInDto.toModel(): Member {
     return Member(
+        id = id,
         fullName = "$firstName $lastName",
         status = if (status) "Active" else "Expired",
         checkedInAt = checkedInAt.time.format(LocalTime.Format {

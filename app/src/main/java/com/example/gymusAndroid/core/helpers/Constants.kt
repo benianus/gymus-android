@@ -1,4 +1,4 @@
-package com.example.gymusAndroid.core
+package com.example.gymusAndroid.core.helpers
 
 const val PORT = 8080
 const val HOST = "10.0.2.2"

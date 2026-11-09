@@ -1,6 +1,5 @@
 package com.example.gymusAndroid.membership.presentation.Memberships
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -47,6 +46,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.gymusAndroid.R
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
 import com.example.gymusAndroid.core.navigation.MemberCardScreen
@@ -62,12 +62,14 @@ fun MembershipsRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     membershipsViewModel: MembershipsViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel(),
 ) {
     val uiState by membershipsViewModel.uiState.collectAsState()
 
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             MembershipsCompactScreen(
+                onClickLogout = loginViewModel::logout,
                 members = uiState.members,
                 modifier = Modifier,
                 navController = navController
@@ -90,6 +92,7 @@ fun MembershipsCompactScreen(
     members: List<Member>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    onClickLogout: () -> Unit,
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val isMembershipScreen =
@@ -100,6 +103,7 @@ fun MembershipsCompactScreen(
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 title = "Memberships",
                 navHostController = navController,
                 isActualScreen = isMembershipScreen
@@ -134,7 +138,6 @@ fun MembershipsCompactScreen(
                     modifier = Modifier
                         .padding(bottom = dimensionResource(R.dimen.medium))
                         .clickable {
-                            Log.i("member_id", member.id.toString())
                             navController.navigate(
                                 MemberCardScreen(member.id)
                             )
@@ -196,7 +199,8 @@ fun MembershipsCompactScreenPreview() {
     GymusAppTheme {
         MembershipsCompactScreen(
             members = emptyList(),
-            navController = rememberNavController()
+            navController = rememberNavController(),
+            onClickLogout = {},
         )
     }
 }

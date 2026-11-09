@@ -1,5 +1,7 @@
 package com.example.gymusAndroid.dashboard.data.repositoriesImpl
 
+import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.gymusAndroid.core.dto.ErrorResponseDto
 import com.example.gymusAndroid.dashboard.domain.models.Member
 import com.example.gymusAndroid.dashboard.domain.repositories.DashboardRepository
 import kotlinx.datetime.LocalTime
@@ -11,6 +13,7 @@ import kotlin.time.Clock
 class FakeDashboardRepositoryImpl : DashboardRepository {
     val members = mutableSetOf(
         Member(
+            id = 1,
             fullName = "Mohamed BENIANE",
             status = "Active",
             checkedInAt = Clock.System.now()
@@ -24,6 +27,7 @@ class FakeDashboardRepositoryImpl : DashboardRepository {
             personalPhoto = ""
         ),
         Member(
+            id = 2,
             fullName = "Abdellah BENIANE",
             status = "Expired",
             checkedInAt = Clock.System.now()
@@ -38,9 +42,12 @@ class FakeDashboardRepositoryImpl : DashboardRepository {
         )
     )
 
-    override suspend fun getActiveMembers() = 100
+    override suspend fun getActiveMembers(): ApiResponse<Int, ErrorResponseDto> =
+            ApiResponse.Success(100)
 
-    override suspend fun getTodaysRevenue() = 1000.0
+    override suspend fun getTodaysRevenue(): ApiResponse<Double, ErrorResponseDto> =
+            ApiResponse.Success(1000.0)
 
-    override suspend fun getRecentCheckIns(): Set<Member> = members
+    override suspend fun getRecentCheckIns(): ApiResponse<Set<Member>, ErrorResponseDto> =
+            ApiResponse.Success(members)
 }

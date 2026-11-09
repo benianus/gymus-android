@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.gymusAndroid.R
@@ -18,10 +19,13 @@ import com.example.gymusAndroid.R
  */
 @Composable
 fun TopBar(
+    onClickLogout: () -> Unit = {},
     navHostController: NavHostController,
     title: String = "",
     isActualScreen: Boolean = false
 ) {
+    val context = LocalContext.current
+
     TopAppBar(
         navigationIcon = {
             if (!isActualScreen) {
@@ -30,12 +34,23 @@ fun TopBar(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_24),
-                        contentDescription = "icon"
+                        contentDescription = "return back"
                     )
                 }
             }
         },
-        actions = {},
+        actions = {
+            IconButton(
+                onClick = { onClickLogout() }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.baseline_logout_24),
+                    contentDescription = "logout"
+                )
+            }
+
+
+        },
         title = { Text(title, style = MaterialTheme.typography.titleLarge) }
     )
 }

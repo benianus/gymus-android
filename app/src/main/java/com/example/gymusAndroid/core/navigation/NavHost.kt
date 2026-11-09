@@ -2,6 +2,7 @@ package com.example.gymusAndroid.core.navigation
 
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,19 +31,25 @@ fun AppNavHost(
 ) {
     val isAuthenticated by loginViewModel.authenticated.collectAsState()
 
-//    LaunchedEffect(isAuthenticated) {
-//        if (isAuthenticated.isBlank()) {
-//            navController.navigate(Login) { popUpTo(0) { inclusive = true } }
-//        } else {
-//            navController.navigate(Dashboard) { popUpTo(0) { inclusive = true } }
-//        }
-//    }
-
-    // TODO("make 'if (isAuthenticated.isBlank()) Login else Dashboard' in the start destination later")
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated.isBlank()) {
+            navController.navigate(LoginScreen) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+            }
+        } else {
+            navController.navigate(DashboardScreen) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = DashboardScreen
+        startDestination = if (isAuthenticated.isBlank()) LoginScreen else DashboardScreen
     ) {
         composable<LoginScreen> {
             LoginRoute(
@@ -67,8 +74,8 @@ fun AppNavHost(
 
         composable<MembershipsScreen> {
             MembershipsRoute(
+                widthSizeClass = widthSizeClass,
                 navController = navController,
-                widthSizeClass = widthSizeClass
             )
         }
 
@@ -110,7 +117,7 @@ fun AppNavHost(
         composable<ReportsScreen> {
             ReportsRoute(
                 widthSizeClass = widthSizeClass,
-                navController = navController
+                navController = navController,
             )
         }
     }

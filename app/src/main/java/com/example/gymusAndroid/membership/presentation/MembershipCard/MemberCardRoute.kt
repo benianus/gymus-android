@@ -32,6 +32,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.gymusAndroid.R
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.ItemNotFoundErrorMessage
 import com.example.gymusAndroid.core.components.ShowErrorMessage
@@ -45,14 +46,22 @@ fun MemberCardRoute(
     widthSizeClass: WindowWidthSizeClass,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
-    memberCardViewModel: MemberCardViewModel = koinViewModel()
+    memberCardViewModel: MemberCardViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     val uiState by memberCardViewModel.uiState.collectAsState()
+
+    ShowErrorMessage(
+        error = uiState.error,
+        onDismissRequest = memberCardViewModel::onErrorChanged,
+        onConfirmation = memberCardViewModel::onErrorChanged
+    )
+
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            if (uiState.loading) CircularProgressIndicator()
-            uiState.error?.let { ShowErrorMessage(it) }
+            if (uiState.isLoading) CircularProgressIndicator()
             MemberCardCompactScreen(
+                onClickLogout = loginViewModel::logout,
                 memberCard = uiState.memberCard,
                 navHostController = navHostController,
                 modifier = Modifier
@@ -71,6 +80,7 @@ fun MemberCardRoute(
 
 @Composable
 fun MemberCardCompactScreen(
+    onClickLogout: () -> Unit,
     memberCard: MemberCard?,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
@@ -81,6 +91,7 @@ fun MemberCardCompactScreen(
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 title = "Member Card",
                 navHostController = navHostController,
                 isActualScreen = false

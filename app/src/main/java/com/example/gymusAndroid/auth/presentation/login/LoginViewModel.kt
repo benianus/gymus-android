@@ -1,11 +1,13 @@
 package com.example.gymusAndroid.auth.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
 import com.example.gymusAndroid.auth.domain.model.User
 import com.example.gymusAndroid.auth.domain.useCases.LoginUseCase
 import com.example.gymusAndroid.auth.domain.useCases.LogoutUseCase
+import com.example.gymusAndroid.core.dto.ApiResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +36,18 @@ class LoginViewModel(
                 uiState.update {
                     it.copy(
                         loading = false,
-                        errors = listOf(throwable.message ?: "Unknown error")
+                        error = throwable.message ?: "Unknown Message"
                     )
                 }
             }
+
+    fun onErrorChanged() {
+        uiState.update {
+            it.copy(
+                error = null
+            )
+        }
+    }
 
     fun onUsernameChanged(username: String) {
         when {
@@ -84,7 +94,12 @@ class LoginViewModel(
     }
 
     fun login(username: String, password: String) {
-        uiState.update { it.copy(loading = true) }
+        uiState.update {
+            it.copy(
+                loading = true,
+                error = null
+            )
+        }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val result = loginUseCase(
@@ -98,14 +113,23 @@ class LoginViewModel(
                 )
             )
 
-            if (result.data != null) {
-                uiState.update { it.copy(loading = false) }
-            } else {
-                uiState.update {
-                    it.copy(
-                        loading = false,
-                        errors = result.errors
-                    )
+            when (result) {
+                is ApiResponse.Error -> {
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = result.error.message
+                        )
+                    }
+                }
+
+                is ApiResponse.Success -> {
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = null,
+                        )
+                    }
                 }
             }
         }
@@ -117,11 +141,33 @@ class LoginViewModel(
         uiState.update {
             it.copy(
                 loading = true,
+                error = null
             )
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            logoutUseCase()
+            Log.i("logout_viewmodel", "logout succeed")
+            when (val result = logoutUseCase()) {
+                is ApiResponse.Error -> {
+                    Log.i("logout_viewmodel_error", "logout succeed")
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = result.error.message
+                        )
+                    }
+                }
+
+                is ApiResponse.Success -> {
+                    Log.i("logout_viewmodel_success", "logout succeed")
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = result.data
+                        )
+                    }
+                }
+            }
         }
     }
 }

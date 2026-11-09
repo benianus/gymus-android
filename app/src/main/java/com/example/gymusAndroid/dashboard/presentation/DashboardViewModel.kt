@@ -1,8 +1,10 @@
 package com.example.gymusAndroid.dashboard.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
+import com.example.gymusAndroid.core.dto.ApiResponse
 import com.example.gymusAndroid.dashboard.domain.useCases.ActiveMembersUseCase
 import com.example.gymusAndroid.dashboard.domain.useCases.RecentCheckInsUseCase
 import com.example.gymusAndroid.dashboard.domain.useCases.TodaysRevenueUseCase
@@ -57,47 +59,74 @@ class DashboardViewModel(
     }
 
     suspend fun getActiveMembers() {
-        try {
-            uiState.update {
-                it.copy(
-                    activeMembers = activeMembersUseCase(),
-                    isLoading = false,
-                    error = null
-                )
+        when (val result = activeMembersUseCase()) {
+            is ApiResponse.Error -> {
+                uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = result.error.message
+                    )
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
+
+            is ApiResponse.Success -> {
+                uiState.update {
+                    it.copy(
+                        activeMembers = result.data,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }
         }
+
     }
 
     suspend fun getRecentChecksInMembers() {
-        try {
-            uiState.update {
-                it.copy(
-                    members = recentCheckInsUseCase(),
-                    isLoading = false,
-                    error = null
-                )
+        when (val result = recentCheckInsUseCase()) {
+            is ApiResponse.Error -> {
+                Log.e("RECENT_CHECK_IN_ERROR", result.error.message)
+                uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = result.error.message
+                    )
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
+
+            is ApiResponse.Success -> {
+                Log.e("RECENT_CHECK_IN_SUCCESS", result.data.toString())
+                uiState.update {
+                    it.copy(
+                        members = result.data,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }
         }
     }
 
     suspend fun getTodaysRevenue() {
-        try {
-            uiState.update {
-                it.copy(
-                    todayRevenue = todaysRevenueUseCase(),
-                    isLoading = false,
-                    error = null
-                )
+        when (val result = todaysRevenueUseCase()) {
+            is ApiResponse.Error -> {
+                uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = result.error.message
+                    )
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
+
+            is ApiResponse.Success -> {
+                uiState.update {
+                    it.copy(
+                        todayRevenue = result.data,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 
 package com.example.gymusAndroid.dashboard.presentation
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
@@ -42,10 +42,15 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
 import com.example.gymusAndroid.R
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
+import com.example.gymusAndroid.core.helpers.BASE_URL
 import com.example.gymusAndroid.core.navigation.DashboardScreen
+import com.example.gymusAndroid.core.navigation.MemberCardScreen
 import com.example.gymusAndroid.core.navigation.MembershipsScreen
 import com.example.gymusAndroid.core.navigation.ProductsScreen
 import com.example.gymusAndroid.core.navigation.RegisterMembershipScreen
@@ -54,6 +59,7 @@ import com.example.gymusAndroid.core.navigation.ReportsScreen
 import com.example.gymusAndroid.core.navigation.SessionsScreen
 import com.example.gymusAndroid.core.theme.GymusAppTheme
 import com.example.gymusAndroid.dashboard.domain.models.Member
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -61,18 +67,30 @@ fun DashboardRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     widthSizeClass: WindowWidthSizeClass,
-    dashboardViewModel: DashboardViewModel = koinViewModel()
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
-    var uiState = dashboardViewModel.uiState.collectAsState()
-    
-    when (widthSizeClass) {
-        WindowWidthSizeClass.Compact -> DashboardCompactScreen(
-            navController = navController,
-            uiState = uiState
-        )
+    val uiState = dashboardViewModel.uiState.collectAsState().value
 
-        WindowWidthSizeClass.Medium -> DashboardMediumScreen(navController = navController)
-        WindowWidthSizeClass.Expanded -> DashboardExpandedScreen(navController = navController)
+    when (widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            DashboardCompactScreen(
+                onClickLogout = {
+                    Log.i("logout_ui", "logout succeed")
+                    loginViewModel.logout()
+                },
+                navController = navController,
+                uiState = uiState
+            )
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            DashboardMediumScreen(navController = navController)
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            DashboardExpandedScreen(navController = navController)
+        }
     }
 }
 
@@ -88,6 +106,7 @@ fun DashboardMediumScreen(navController: NavHostController) {
 
 @Composable
 fun DashboardCompactScreen(
+    onClickLogout: () -> Unit,
     uiState: DashboardScreenState,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -98,6 +117,7 @@ fun DashboardCompactScreen(
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 navHostController = navController,
                 title = "Gymus",
                 isActualScreen = isDashboardScreen
@@ -133,15 +153,22 @@ fun DashboardCompactScreen(
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
             item { QuickAccessItems(navController = navController) }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
-            item { RecentCheckedMember(uiState = uiState, modifier = Modifier) }
+            item {
+                RecentCheckedInMembers(
+                    navHostController = navController,
+                    members = uiState.members,
+                    modifier = Modifier
+                )
+            }
             item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
         }
     }
 }
 
 @Composable
-fun RecentCheckedMember(
-    uiState: DashboardScreenState,
+fun RecentCheckedInMembers(
+    navHostController: NavHostController,
+    members: Set<Member>,
     modifier: Modifier = Modifier
 ) {
     Column {
@@ -151,9 +178,12 @@ fun RecentCheckedMember(
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
-        if (uiState.members.isNotEmpty()) {
-            for (member in uiState.members) {
+        if (members.isNotEmpty()) {
+            for (member in members) {
                 RecentCheckedMemberItem(
+                    onClickRecentMember = {
+                        navHostController.navigate(MemberCardScreen(it))
+                    },
                     member = member,
                     modifier = Modifier.padding(
                         bottom = dimensionResource(
@@ -175,11 +205,13 @@ fun RecentCheckedMember(
 
 @Composable
 private fun RecentCheckedMemberItem(
+    onClickRecentMember: (Int) -> Unit,
     member: Member,
     modifier: Modifier = Modifier,
+    imageLoader: ImageLoader = koinInject()
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.clickable { onClickRecentMember(member.id) },
         border = BorderStroke(1.dp, Color.LightGray),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
@@ -189,13 +221,16 @@ private fun RecentCheckedMemberItem(
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.medium))
         ) {
-            Image(
-                painter = painterResource(R.drawable.baseline_person_24),
+            AsyncImage(
+                model = "$BASE_URL/files/download/${member.personalPhoto}",
                 contentDescription = "profile photo",
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                imageLoader = imageLoader,
+                placeholder = painterResource(R.drawable.baseline_data_thresholding_24),
+                error = painterResource(R.drawable.baseline_error_24)
             )
             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small)))
             Column(
@@ -360,6 +395,7 @@ private fun QuickAccessItem(
 fun DashboardCompactScreenPreview() {
     GymusAppTheme {
         DashboardCompactScreen(
+            onClickLogout = {},
             uiState = DashboardScreenState(),
             navController = rememberNavController()
         )

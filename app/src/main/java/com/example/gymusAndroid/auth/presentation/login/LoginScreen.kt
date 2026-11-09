@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,18 +42,20 @@ fun LoginRoute(
     navController: NavHostController,
     widthSizeClass: WindowWidthSizeClass,
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     val uiState by loginViewModel.uiState.collectAsState()
 
-    LoginCompactScreen(
-        navController = navController,
-        uiState = uiState,
-        onUsernameChanged = loginViewModel::onUsernameChanged,
-        onPasswordChanged = loginViewModel::onPasswordChanged,
-        login = loginViewModel::login
+    // show alert dialog in case of login failed
+    ShowErrorMessage(
+        error = uiState.error,
+        onDismissRequest = loginViewModel::onErrorChanged,
+        onConfirmation = loginViewModel::onErrorChanged,
+        dialogTitle = "Error Happen!",
+        icon = painterResource(R.drawable.baseline_error_24)
     )
 
+    // display screen adaptively
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             LoginCompactScreen(
@@ -182,9 +185,6 @@ private fun LoginCompactScreen(
                 )
             }
         }
-
-        // if error screen updated show error message toast
-        ShowErrorMessage(uiState.errors)
     }
 }
 

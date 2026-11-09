@@ -1,5 +1,7 @@
 package com.example.gymusAndroid.membership.data.repositoriesImpl
 
+import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.gymusAndroid.core.dto.ErrorResponseDto
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberRegisterRequestDto
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberUpdateRequestDto
 import com.example.gymusAndroid.membership.domain.models.Member
@@ -249,34 +251,36 @@ class FakeMembershipsRepositoryImpl : MembershipRepository {
     override suspend fun findAllMembers(
         page: Int,
         pageSize: Int
-    ): List<Member> {
-        return this.members
+    ): ApiResponse<List<Member>, ErrorResponseDto> {
+        return ApiResponse.Success(members)
     }
 
-    override suspend fun registerMember(memberRegisterRequestDto: MemberRegisterRequestDto) {
+    override suspend fun registerMember(
+        memberRegisterRequestDto: MemberRegisterRequestDto
+    ): ApiResponse<Unit, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun recordAttendance(memberId: Int) {
+    override suspend fun recordAttendance(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun renewMembership(memberId: Int) {
+    override suspend fun renewMembership(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findMemberCard(memberId: Int): MemberCard? {
-        return this.memberCards.firstOrNull { it.id == memberId }
+    override suspend fun findMemberCard(memberId: Int): ApiResponse<MemberCard?, ErrorResponseDto> {
+        return ApiResponse.Success(memberCards.firstOrNull { it.id == memberId })
     }
 
     override suspend fun updateMember(
         memberId: Int,
         memberUpdateRequestDto: MemberUpdateRequestDto
-    ) {
+    ): ApiResponse<Unit, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteMember(memberId: Int) {
+    override suspend fun deleteMember(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 

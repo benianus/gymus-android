@@ -10,19 +10,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.gymusAndroid.R
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
 import com.example.gymusAndroid.core.navigation.RegisterSessionScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SessionsRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    widthSizeClass: WindowWidthSizeClass
+    widthSizeClass: WindowWidthSizeClass,
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             SessionsCompactScreen(
+                onClickLogout = loginViewModel::logout,
                 navController = navController,
                 modifier = Modifier
             )
@@ -39,23 +43,25 @@ fun SessionsRoute(
 }
 
 @Composable
-fun SessionsExpandedScreen(modifier: Modifier.Companion) {
+fun SessionsExpandedScreen(modifier: Modifier) {
     TODO("Not yet implemented")
 }
 
 @Composable
-fun SessionsMediumScreen(modifier: Modifier.Companion) {
+fun SessionsMediumScreen(modifier: Modifier) {
     TODO("Not yet implemented")
 }
 
 @Composable
 fun SessionsCompactScreen(
     navController: NavHostController,
-    modifier: Modifier.Companion
+    modifier: Modifier,
+    onClickLogout: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 navHostController = navController,
                 title = "Sessions",
                 isActualScreen = true
@@ -74,5 +80,7 @@ fun SessionsCompactScreen(
                 shape = MaterialTheme.shapes.medium
             )
         }
-    ) { }
+    ) { innerPadding ->
+
+    }
 }

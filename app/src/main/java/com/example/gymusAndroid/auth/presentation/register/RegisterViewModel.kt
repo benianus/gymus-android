@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymusAndroid.auth.domain.model.User
 import com.example.gymusAndroid.auth.domain.useCases.RegisterUseCase
+import com.example.gymusAndroid.core.dto.ApiResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,18 +15,27 @@ import org.koin.core.annotation.KoinViewModel
 import kotlin.time.Clock
 
 @KoinViewModel
-class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewModel() {
+class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
+    ViewModel() {
     val uiState: StateFlow<RegisterScreenState>
-        field = MutableStateFlow(RegisterScreenState())
+            field = MutableStateFlow(RegisterScreenState())
     val coroutineExceptionHandler =
-        CoroutineExceptionHandler { _, throwable ->
-            uiState.update {
-                it.copy(
-                    loading = false,
-                    error = throwable.message
-                )
+            CoroutineExceptionHandler { _, throwable ->
+                uiState.update {
+                    it.copy(
+                        loading = false,
+                        error = throwable.message
+                    )
+                }
             }
+
+    fun onErrorChanged() {
+        uiState.update {
+            it.copy(
+                error = null
+            )
         }
+    }
 
     fun onUsernameChanged(username: String) {
         when {
@@ -48,7 +58,12 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewMode
             }
 
             else -> {
-                uiState.update { it.copy(username = username, usernameError = null) }
+                uiState.update {
+                    it.copy(
+                        username = username,
+                        usernameError = null
+                    )
+                }
             }
         }
     }
@@ -73,8 +88,23 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewMode
                 }
             }
 
+            password != uiState.value.passwordConfirmation -> {
+                uiState.update {
+                    it.copy(
+                        password = password,
+                        passwordError = "password not match"
+                    )
+                }
+            }
+
             else -> {
-                uiState.update { it.copy(password = password, passwordError = null) }
+                uiState.update {
+                    it.copy(
+                        password = password,
+                        passwordError = null,
+                        passwordConfirmationError = null
+                    )
+                }
             }
         }
     }
@@ -90,7 +120,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewMode
                 }
             }
 
-            passwordConfirmation == uiState.value.password -> {
+            passwordConfirmation != uiState.value.password -> {
                 uiState.update {
                     it.copy(
                         passwordConfirmation = passwordConfirmation,
@@ -103,7 +133,8 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewMode
                 uiState.update {
                     it.copy(
                         passwordConfirmation = passwordConfirmation,
-                        passwordConfirmationError = null
+                        passwordConfirmationError = null,
+                        passwordError = null
                     )
                 }
             }
@@ -129,10 +160,24 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) : ViewMode
                 )
             )
 
-            if (result == null) {
-                uiState.update { it.copy(loading = false) }
-            } else {
-                uiState.update { it.copy(loading = false, error = result) }
+            when (result) {
+                is ApiResponse.Error -> {
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = result.error.message
+                        )
+                    }
+                }
+
+                is ApiResponse.Success -> {
+                    uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = null
+                        )
+                    }
+                }
             }
 
         }

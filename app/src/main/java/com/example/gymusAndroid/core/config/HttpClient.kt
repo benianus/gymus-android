@@ -4,7 +4,9 @@ import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.RefreshTokenRequestDto
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.response.AuthResponseDto
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.response.RefreshTokenResponseDto
-import com.example.gymusAndroid.core.BASE_URL
+import com.example.gymusAndroid.core.helpers.BASE_URL
+import com.example.gymusAndroid.core.helpers.HOST
+import com.example.gymusAndroid.core.helpers.PORT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -24,7 +26,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
-fun createHttpClient(authDataStore: AuthDataStore): HttpClient =
+fun createHttpClient(authDataStore: AuthDataStore) =
         HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json {
@@ -79,6 +81,13 @@ fun createHttpClient(authDataStore: AuthDataStore): HttpClient =
                             )
                         }
                     }
+                    sendWithoutRequest { request ->
+                        request.url.host == HOST
+                        request.url.port == PORT
+                    }
                 }
             }
+
         }
+
+

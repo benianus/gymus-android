@@ -16,6 +16,6 @@ val USERNAME = stringPreferencesKey("username")
 
 val Context.AuthDataStore: DataStore<Preferences> by preferencesDataStore("auth_data")
 
-fun createAuthDataStore(context: Context): DataStore<Preferences> = context.AuthDataStore
+fun createAuthDataStore(context: Context) = context.AuthDataStore
 
 

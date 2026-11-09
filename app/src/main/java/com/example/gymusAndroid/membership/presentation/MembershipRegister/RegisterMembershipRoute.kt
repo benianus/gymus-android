@@ -7,18 +7,22 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
 import com.example.gymusAndroid.core.components.BottomNavBar
 import com.example.gymusAndroid.core.components.TopBar
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun RegisterMembershipRoute(
     widthSizeClass: WindowWidthSizeClass,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             RegisterMembershipCompactScreen(
+                onClickLogout = loginViewModel::logout,
                 navController = navController,
                 modifier = Modifier
             )
@@ -47,11 +51,13 @@ fun RegisterMembershipMediumScreen(modifier: Modifier = Modifier) {
 @Composable
 fun RegisterMembershipCompactScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickLogout: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopBar(
+                onClickLogout = onClickLogout,
                 title = "Register Membership",
                 navHostController = navController,
                 isActualScreen = false

@@ -4,8 +4,10 @@ import com.example.gymusAndroid.auth.data.dataSource.remote.dto.response.AuthRes
 import com.example.gymusAndroid.auth.domain.model.User
 import com.example.gymusAndroid.auth.domain.repository.UserRepository
 import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.gymusAndroid.core.dto.ErrorResponseDto
 
 class LoginUseCase(private val userRepository: UserRepository) {
-    suspend operator fun invoke(user: User): ApiResponse<AuthResponseDto> =
-            userRepository.login(user)
+    suspend operator fun invoke(user: User): ApiResponse<AuthResponseDto, ErrorResponseDto> {
+        return userRepository.login(user)
+    }
 }

@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.gymusAndroid"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
@@ -129,7 +129,7 @@ dependencies {
 
     // coil
     implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.network.ktor)
 
     // testing
     testImplementation(libs.junit)

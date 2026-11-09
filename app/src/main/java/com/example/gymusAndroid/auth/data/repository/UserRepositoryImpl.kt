@@ -1,8 +1,8 @@
 package com.example.gymusAndroid.auth.data.repository
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
 import com.example.gymusAndroid.auth.data.dataSource.local.UserDao
 import com.example.gymusAndroid.auth.data.dataSource.remote.UserApiService
@@ -13,6 +13,9 @@ import com.example.gymusAndroid.auth.domain.repository.UserRepository
 import com.example.gymusAndroid.auth.toLoginDto
 import com.example.gymusAndroid.auth.toRegisterDto
 import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.gymusAndroid.core.dto.ApiResponse.Error
+import com.example.gymusAndroid.core.dto.ApiResponse.Success
+import com.example.gymusAndroid.core.dto.ErrorResponseDto
 import kotlinx.coroutines.flow.first
 
 class UserRepositoryImpl(
@@ -21,26 +24,41 @@ class UserRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
     private val authDataStore: AuthDataStore
 ) : UserRepository {
-    override suspend fun login(user: User): ApiResponse<AuthResponseDto> {
-        val data = userApiService.login(user.toLoginDto())
-        return data
-    }
+    override suspend fun login(user: User): ApiResponse<AuthResponseDto, ErrorResponseDto> {
+        val result = userApiService.login(user.toLoginDto())
 
-    override suspend fun register(user: User): ApiResponse<AuthResponseDto> {
-        return userApiService.register(user.toRegisterDto())
-    }
-
-    override suspend fun logout(): ApiResponse<String> {
-        val data = userApiService.logout(
-            LogoutRequestDto(
-                username = authDataStore.username.first(),
-                refreshToken = authDataStore.refreshToken.first()
-            )
-        )
-        dataStore.edit {
-            it.clear()
+        if (result is Success) {
+            authDataStore.saveAuthData(result.data)
         }
 
-        return data
+        return result
+    }
+
+    override suspend fun register(user: User): ApiResponse<AuthResponseDto, ErrorResponseDto> {
+        val result = userApiService.register(user.toRegisterDto())
+
+        if (result is Success) {
+            authDataStore.saveAuthData(result.data)
+        }
+
+        return result
+    }
+
+    override suspend fun logout(): ApiResponse<String, ErrorResponseDto> {
+        val username = authDataStore.username.first()
+        val refreshToken = authDataStore.refreshToken.first()
+        val result = userApiService.logout(
+            LogoutRequestDto(
+                username = username,
+                refreshToken = refreshToken
+            )
+        )
+        Log.e("logout_repo", "logout repository success")
+        when (result) {
+            is Error -> authDataStore.clearAuthData()
+            is Success -> authDataStore.clearAuthData()
+        }
+
+        return result
     }
 }

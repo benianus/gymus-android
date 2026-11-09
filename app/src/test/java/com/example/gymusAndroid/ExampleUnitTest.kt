@@ -1,7 +1,7 @@
 package com.example.gymusAndroid
 
 import com.example.gymusAndroid.auth.data.dataSource.remote.dto.request.LoginRequestDto
-import com.example.gymusAndroid.core.BASE_URL
+import com.example.gymusAndroid.core.helpers.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

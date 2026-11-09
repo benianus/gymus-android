@@ -40,28 +40,65 @@ import org.koin.androidx.compose.koinViewModel
 fun RegisterRoute(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    registerViewModel: RegisterViewModel = koinViewModel<RegisterViewModel>(),
+    registerViewModel: RegisterViewModel = koinViewModel(),
     widthSizeClass: WindowWidthSizeClass
 ) {
     val uiState by registerViewModel.uiState.collectAsState()
-    RegisterScreen(
-        navController,
-        uiState,
-        registerViewModel::register,
-        registerViewModel::onUsernameChanged,
-        registerViewModel::onPasswordChanged,
-        registerViewModel::onPasswordConfirmationChanged
+
+    // show error alert dialog in case registration failed
+    ShowErrorMessage(
+        error = uiState.error,
+        onDismissRequest = registerViewModel::onErrorChanged,
+        onConfirmation = registerViewModel::onErrorChanged,
+        dialogTitle = "Error Happen!",
     )
+
+    when (widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            RegisterCompactScreen(
+                navController,
+                uiState,
+                registerViewModel::register,
+                registerViewModel::onUsernameChanged,
+                registerViewModel::onPasswordChanged,
+                registerViewModel::onPasswordConfirmationChanged
+            )
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            RegisterMediumScreen(
+                navController,
+                uiState,
+                registerViewModel::register,
+                registerViewModel::onUsernameChanged,
+                registerViewModel::onPasswordChanged,
+                registerViewModel::onPasswordConfirmationChanged
+            )
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            RegisterExpandedScreen(
+                navController,
+                uiState,
+                registerViewModel::register,
+                registerViewModel::onUsernameChanged,
+                registerViewModel::onPasswordChanged,
+                registerViewModel::onPasswordConfirmationChanged
+            )
+        }
+    }
+
 }
 
 @Composable
-private fun RegisterScreen(
+private fun RegisterCompactScreen(
     navController: NavHostController,
     uiState: RegisterScreenState,
     register: (String, String) -> Unit,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onPasswordConfirmationChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Scaffold { innerPadding ->
         Column(
@@ -162,14 +199,51 @@ private fun RegisterScreen(
         }
     }
 
-    ShowErrorMessage(uiState.error)
+}
+
+@Composable
+private fun RegisterMediumScreen(
+    navController: NavHostController,
+    uiState: RegisterScreenState,
+    register: (String, String) -> Unit,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onPasswordConfirmationChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            Text("Medium Screen")
+        }
+    }
+}
+
+@Composable
+private fun RegisterExpandedScreen(
+    navController: NavHostController,
+    uiState: RegisterScreenState,
+    register: (String, String) -> Unit,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onPasswordConfirmationChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            Text("Medium Screen")
+        }
+    }
 }
 
 @Preview
 @Composable
-fun RegisterRoutePreview() {
+fun RegisterCompactRoutePreview() {
     GymusAppTheme {
-        RegisterScreen(
+        RegisterCompactScreen(
             navController = rememberNavController(),
             uiState = RegisterScreenState(),
             register = { _, _ -> },
