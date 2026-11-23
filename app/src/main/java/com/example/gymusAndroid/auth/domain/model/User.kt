@@ -11,5 +11,12 @@ data class User(
     val createdAt: Instant,
     val updatedAt: Instant
 ) {
-    constructor() : this(0, "", "", "", Clock.System.now(), Clock.System.now())
+    constructor() : this(
+        id = 0,
+        username = "",
+        password = "",
+        role = "",
+        createdAt = Clock.System.now(),
+        updatedAt = Clock.System.now()
+    )
 }

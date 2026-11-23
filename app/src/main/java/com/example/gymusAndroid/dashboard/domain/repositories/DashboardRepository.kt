@@ -1,7 +1,7 @@
 package com.example.gymusAndroid.dashboard.domain.repositories
 
-import com.example.gymusAndroid.core.dto.ApiResponse
-import com.example.gymusAndroid.core.dto.ErrorResponseDto
+import com.example.core.dto.ApiResponse
+import com.example.core.dto.ErrorResponseDto
 import com.example.gymusAndroid.dashboard.domain.models.Member
 
 interface DashboardRepository {

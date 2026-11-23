@@ -3,8 +3,9 @@ package com.example.gymusAndroid.dashboard.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
-import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.core.dto.Error
+import com.example.core.dto.Success
+import com.example.gymusAndroid.auth.data.dataSource.local.dataStore.AuthDataStore
 import com.example.gymusAndroid.dashboard.domain.useCases.ActiveMembersUseCase
 import com.example.gymusAndroid.dashboard.domain.useCases.RecentCheckInsUseCase
 import com.example.gymusAndroid.dashboard.domain.useCases.TodaysRevenueUseCase
@@ -60,7 +61,7 @@ class DashboardViewModel(
 
     suspend fun getActiveMembers() {
         when (val result = activeMembersUseCase()) {
-            is ApiResponse.Error -> {
+            is Error -> {
                 uiState.update {
                     it.copy(
                         isLoading = false,
@@ -69,7 +70,7 @@ class DashboardViewModel(
                 }
             }
 
-            is ApiResponse.Success -> {
+            is Success -> {
                 uiState.update {
                     it.copy(
                         activeMembers = result.data,
@@ -84,7 +85,7 @@ class DashboardViewModel(
 
     suspend fun getRecentChecksInMembers() {
         when (val result = recentCheckInsUseCase()) {
-            is ApiResponse.Error -> {
+            is Error -> {
                 Log.e("RECENT_CHECK_IN_ERROR", result.error.message)
                 uiState.update {
                     it.copy(
@@ -94,7 +95,7 @@ class DashboardViewModel(
                 }
             }
 
-            is ApiResponse.Success -> {
+            is Success -> {
                 Log.e("RECENT_CHECK_IN_SUCCESS", result.data.toString())
                 uiState.update {
                     it.copy(
@@ -109,7 +110,7 @@ class DashboardViewModel(
 
     suspend fun getTodaysRevenue() {
         when (val result = todaysRevenueUseCase()) {
-            is ApiResponse.Error -> {
+            is Error -> {
                 uiState.update {
                     it.copy(
                         isLoading = false,
@@ -118,7 +119,7 @@ class DashboardViewModel(
                 }
             }
 
-            is ApiResponse.Success -> {
+            is Success -> {
                 uiState.update {
                     it.copy(
                         todayRevenue = result.data,

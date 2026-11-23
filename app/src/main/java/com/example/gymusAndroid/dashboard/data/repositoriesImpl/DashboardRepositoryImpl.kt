@@ -1,7 +1,9 @@
 package com.example.gymusAndroid.dashboard.data.repositoriesImpl
 
-import com.example.gymusAndroid.core.dto.ApiResponse
-import com.example.gymusAndroid.core.dto.ErrorResponseDto
+import com.example.core.dto.ApiResponse
+import com.example.core.dto.Error
+import com.example.core.dto.ErrorResponseDto
+import com.example.core.dto.Success
 import com.example.gymusAndroid.dashboard.data.dataSource.remote.DashboardApiService
 import com.example.gymusAndroid.dashboard.domain.models.Member
 import com.example.gymusAndroid.dashboard.domain.repositories.DashboardRepository
@@ -20,12 +22,12 @@ class DashboardRepositoryImpl(
 
     override suspend fun getRecentCheckIns(): ApiResponse<Set<Member>, ErrorResponseDto> =
             when (val result = dashboardApiService.getRecentChecksInMembers()) {
-                is ApiResponse.Error -> {
-                    ApiResponse.Error(ErrorResponseDto(result.error.message))
+                is Error -> {
+                    Error(result.error)
                 }
 
-                is ApiResponse.Success -> {
-                    ApiResponse.Success(result.data.map {
+                is Success -> {
+                    Success(result.data.map {
                         it.toModel()
                     }.toSet())
                 }

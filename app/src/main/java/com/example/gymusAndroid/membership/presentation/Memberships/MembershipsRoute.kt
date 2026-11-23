@@ -1,25 +1,19 @@
 package com.example.gymusAndroid.membership.presentation.Memberships
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -28,9 +22,6 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,22 +29,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import com.example.core.components.BottomNavBar
+import com.example.core.components.TopBar
+import com.example.core.helpers.BASE_URL
+import com.example.core.navigation.MemberCardScreen
+import com.example.core.navigation.RegisterMembershipScreen
+import com.example.core.navigation.UpdateMembershipScreen
+import com.example.core.theme.GymusAppTheme
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
-import com.example.gymusAndroid.core.components.BottomNavBar
-import com.example.gymusAndroid.core.components.TopBar
-import com.example.gymusAndroid.core.navigation.MemberCardScreen
-import com.example.gymusAndroid.core.navigation.MembershipsScreen
-import com.example.gymusAndroid.core.navigation.RegisterMembershipScreen
-import com.example.gymusAndroid.core.theme.GymusAppTheme
 import com.example.gymusAndroid.membership.domain.models.Member
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -89,24 +88,21 @@ fun MembershipsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MembershipsCompactScreen(
-    members: List<Member>,
+    members: Flow<PagingData<Member>>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onClickLogout: () -> Unit,
+    imageLoader: ImageLoader = koinInject()
 ) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val isMembershipScreen =
-            backStackEntry?.destination?.hasRoute<MembershipsScreen>() ?: false
-
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    val lazyMembersItems = members.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
             TopBar(
                 onClickLogout = onClickLogout,
-                title = "Memberships",
+                title = stringResource(R.string.members),
                 navHostController = navController,
-                isActualScreen = isMembershipScreen
+                showNavigateUpIcon = false
             )
         },
         bottomBar = {
@@ -121,7 +117,7 @@ fun MembershipsCompactScreen(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.baseline_add_24),
-                    contentDescription = "add member",
+                    contentDescription = stringResource(R.string.add_member),
                     modifier = Modifier
                 )
             }
@@ -130,56 +126,97 @@ fun MembershipsCompactScreen(
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets
     ) { innerPadding ->
         LazyColumn(
-            contentPadding = PaddingValues(dimensionResource(R.dimen.small)),
-            modifier = Modifier.padding(innerPadding),
+            contentPadding = innerPadding,
         ) {
-            items(members) { member ->
-                Card(
-                    modifier = Modifier
-                        .padding(bottom = dimensionResource(R.dimen.medium))
-                        .clickable {
-                            navController.navigate(
-                                MemberCardScreen(member.id)
-                            )
-                        },
-                    border = BorderStroke(1.dp, Color.LightGray),
-                    elevation = CardDefaults.cardElevation(1.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+            items(
+                count = lazyMembersItems.itemCount,
+                key = lazyMembersItems.itemKey { it.id }
+            ) { index ->
+                lazyMembersItems[index]?.let { member ->
+                    ListItem(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(dimensionResource(R.dimen.medium))
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.baseline_person_24),
-                            contentDescription = "profile photo",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small)))
-                        Column(
-                            modifier = Modifier.weight(2f),
-                        ) {
+                            .padding(
+                                vertical = dimensionResource(R.dimen.small),
+                                horizontal = dimensionResource(R.dimen.medium)
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    route = MemberCardScreen(
+                                        member.id
+                                    )
+                                )
+                            }
+                            .clip(MaterialTheme.shapes.medium),
+                        colors = ListItemDefaults.colors(
+                            headlineColor = Color.Black,
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            supportingColor = Color.Gray,
+                            trailingIconColor = Color.DarkGray
+                        ),
+                        headlineContent = {
                             Text(
-                                text = "${member.firstName} ${member.lastName}",
+                                text = stringResource(
+                                    R.string.full_name,
+                                    member.firstName,
+                                    member.lastName
+                                ),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
+                        },
+                        supportingContent = {
                             Text(
                                 text = member.endDate,
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Normal
                             )
+                        },
+                        leadingContent = {
+                            AsyncImage(
+                                model = "$BASE_URL/files/download/${member.personalPhoto}",
+                                contentDescription = stringResource(R.string.profile_photo),
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                                imageLoader = imageLoader,
+                                placeholder = painterResource(R.drawable.baseline_data_thresholding_24),
+                                error = painterResource(R.drawable.baseline_error_24)
+                            )
+                        },
+                        trailingContent = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    space = dimensionResource(R.dimen.medium)
+                                )
+                            ) {
+                                Text(
+                                    text = if (member.isActive) stringResource(R.string.active) else stringResource(
+                                        R.string.expired
+                                    ),
+                                    modifier = Modifier
+                                )
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate(
+                                            UpdateMembershipScreen(
+                                                memberId = member.id
+                                            )
+                                        )
+                                    },
+                                    modifier = Modifier.size(dimensionResource(R.dimen.medium))
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.baseline_edit_24),
+                                        contentDescription = stringResource(R.string.update_member)
+                                    )
+                                }
+                            }
                         }
-                        Text(
-                            text = if (member.isActive) "Active" else "Expired",
-                            modifier = Modifier
-                        )
-                    }
+                    )
                 }
+
             }
         }
     }
@@ -198,7 +235,7 @@ fun MembershipsExpandedScreen() {
 fun MembershipsCompactScreenPreview() {
     GymusAppTheme {
         MembershipsCompactScreen(
-            members = emptyList(),
+            members = emptyFlow(),
             navController = rememberNavController(),
             onClickLogout = {},
         )

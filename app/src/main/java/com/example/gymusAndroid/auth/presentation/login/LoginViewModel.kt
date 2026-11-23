@@ -3,11 +3,12 @@ package com.example.gymusAndroid.auth.presentation.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymusAndroid.auth.data.dataSource.dataStore.AuthDataStore
+import com.example.core.dto.Error
+import com.example.core.dto.Success
+import com.example.gymusAndroid.auth.data.dataSource.local.dataStore.AuthDataStore
 import com.example.gymusAndroid.auth.domain.model.User
 import com.example.gymusAndroid.auth.domain.useCases.LoginUseCase
 import com.example.gymusAndroid.auth.domain.useCases.LogoutUseCase
-import com.example.gymusAndroid.core.dto.ApiResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,7 +115,7 @@ class LoginViewModel(
             )
 
             when (result) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     uiState.update {
                         it.copy(
                             loading = false,
@@ -123,7 +124,7 @@ class LoginViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
                     uiState.update {
                         it.copy(
                             loading = false,
@@ -146,9 +147,8 @@ class LoginViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            Log.i("logout_viewmodel", "logout succeed")
             when (val result = logoutUseCase()) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     Log.i("logout_viewmodel_error", "logout succeed")
                     uiState.update {
                         it.copy(
@@ -158,7 +158,7 @@ class LoginViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
                     Log.i("logout_viewmodel_success", "logout succeed")
                     uiState.update {
                         it.copy(

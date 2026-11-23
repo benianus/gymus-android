@@ -6,6 +6,8 @@ plugins {
     kotlin("plugin.serialization") version "2.0.21"
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.koin.compiler)
+    alias(libs.plugins.hotswan.compiler)
+//    2.4.21
 }
 
 android {

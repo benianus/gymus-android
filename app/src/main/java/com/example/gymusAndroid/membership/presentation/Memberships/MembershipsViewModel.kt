@@ -1,8 +1,10 @@
 package com.example.gymusAndroid.membership.presentation.Memberships
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymusAndroid.core.dto.ApiResponse
+import com.example.core.dto.Error
+import com.example.core.dto.Success
 import com.example.gymusAndroid.membership.domain.useCases.FindAllMembersUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -28,9 +30,16 @@ class MembershipsViewModel(
     }
 
     init {
+        uiState.update {
+            it.copy(
+                isLoading = true,
+                error = null
+            )
+        }
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            when (val result = findAllMembersUseCase(1, 10)) {
-                is ApiResponse.Error -> {
+            when (val result = findAllMembersUseCase()) {
+                is Error -> {
+                    Log.e("members_data_error", result.error.toString())
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -39,7 +48,8 @@ class MembershipsViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
+                    Log.e("members_data_success", result.data.toString())
                     uiState.update {
                         it.copy(
                             members = result.data,

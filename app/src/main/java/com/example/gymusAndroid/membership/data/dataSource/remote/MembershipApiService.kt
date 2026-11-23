@@ -1,8 +1,8 @@
 package com.example.gymusAndroid.membership.data.dataSource.remote
 
-import com.example.gymusAndroid.core.dto.ApiResponse
-import com.example.gymusAndroid.core.dto.ErrorResponseDto
-import com.example.gymusAndroid.core.dto.PagedResponse
+import com.example.core.dto.ApiResponse
+import com.example.core.dto.ErrorResponseDto
+import com.example.core.dto.PagedResponse
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberRegisterRequestDto
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.MemberUpdateRequestDto
 import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.responses.MemberCardResponseDto
@@ -12,7 +12,7 @@ interface MembershipApiService {
     suspend fun findAllMembers(
         page: Int = 1,
         pageSize: Int = 9
-    ): PagedResponse<ApiResponse<List<MemberResponseDto>, ErrorResponseDto>>
+    ): ApiResponse<PagedResponse<List<MemberResponseDto>>, ErrorResponseDto>
 
     suspend fun registerMember(
         memberRegisterRequestDto: MemberRegisterRequestDto

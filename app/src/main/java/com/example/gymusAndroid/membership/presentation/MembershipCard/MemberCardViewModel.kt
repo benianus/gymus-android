@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.example.gymusAndroid.core.dto.ApiResponse
-import com.example.gymusAndroid.core.navigation.MemberCardScreen
+import com.example.core.dto.Error
+import com.example.core.dto.Success
+import com.example.core.navigation.MemberCardScreen
+import com.example.gymusAndroid.membership.domain.useCases.DeleteMembershipUseCase
 import com.example.gymusAndroid.membership.domain.useCases.FindMemberCardUseCase
 import com.example.gymusAndroid.membership.domain.useCases.RecordAttendanceUseCase
 import com.example.gymusAndroid.membership.domain.useCases.RenewMembershipUseCase
@@ -20,6 +22,7 @@ class MemberCardViewModel(
     private val findMemberCardUseCase: FindMemberCardUseCase,
     private val renewMembershipUseCase: RenewMembershipUseCase,
     private val recordAttendanceUseCase: RecordAttendanceUseCase,
+    private val deleteMembershipUseCase: DeleteMembershipUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -36,6 +39,7 @@ class MemberCardViewModel(
 
     init {
         val memberId = savedStateHandle.toRoute<MemberCardScreen>().memberId
+        println("member id: $memberId")
         getMemberCard(memberId)
     }
 
@@ -52,7 +56,7 @@ class MemberCardViewModel(
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (val result = findMemberCardUseCase(memberId)) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -61,7 +65,7 @@ class MemberCardViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
                     uiState.update {
                         it.copy(
                             memberCard = result.data,
@@ -79,7 +83,7 @@ class MemberCardViewModel(
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (val result = recordAttendanceUseCase(memberId)) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -88,7 +92,7 @@ class MemberCardViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -105,7 +109,7 @@ class MemberCardViewModel(
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (val result = renewMembershipUseCase(memberId)) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -114,7 +118,33 @@ class MemberCardViewModel(
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
+                    uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteMembership(memberId: Int) {
+        uiState.update { it.copy(isLoading = true) }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            when (val result = deleteMembershipUseCase(memberId)) {
+                is Error -> {
+                    uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.error.message
+                        )
+                    }
+                }
+
+                is Success -> {
                     uiState.update {
                         it.copy(
                             isLoading = false,

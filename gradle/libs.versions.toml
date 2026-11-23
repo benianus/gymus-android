@@ -7,14 +7,14 @@ datastorePreferences = "1.3.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-kotlinxSerializationJson = "1.12.0"
+kotlinxSerializationJson = "1.13.0"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.21"
 composeBom = "2026.09.00"
 ktor = "3.6.1"
 koin = "4.2.2"
-koin-plugin = "1.2.2"
+koin-plugin = "1.2.3"
 material3 = "1.4.0"
 navigationCompose = "2.10.2"
 room = "2.8.5"
@@ -87,4 +87,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 room-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }
+hotswan-compiler = { id = "com.github.skydoves.compose.hotswan.compiler", version = "2.2.0" }
 

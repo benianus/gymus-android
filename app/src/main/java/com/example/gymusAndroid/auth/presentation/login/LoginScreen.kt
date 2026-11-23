@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,16 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.core.components.ErrorMessageDialog
+import com.example.core.navigation.RegisterScreen
+import com.example.core.theme.GymusAppTheme
 import com.example.gymusAndroid.R
-import com.example.gymusAndroid.core.components.ShowErrorMessage
-import com.example.gymusAndroid.core.navigation.RegisterScreen
-import com.example.gymusAndroid.core.theme.GymusAppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -47,7 +52,7 @@ fun LoginRoute(
     val uiState by loginViewModel.uiState.collectAsState()
 
     // show alert dialog in case of login failed
-    ShowErrorMessage(
+    ErrorMessageDialog(
         error = uiState.error,
         onDismissRequest = loginViewModel::onErrorChanged,
         onConfirmation = loginViewModel::onErrorChanged,
@@ -93,14 +98,13 @@ fun LoginRoute(
 private fun LoginCompactScreen(
     navController: NavHostController,
     uiState: LoginScreenState,
-    onUsernameChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
-    login: (String, String) -> Unit,
+    onUsernameChanged: (username: String) -> Unit,
+    onPasswordChanged: (password: String) -> Unit,
+    login: (username: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     Scaffold { innerPadding ->
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -109,42 +113,56 @@ private fun LoginCompactScreen(
                 .padding(innerPadding)
         ) {
             Text(
-                text = "Login",
+                text = stringResource(R.string.login),
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.medium))
             )
             Text(
-                text = "Welcome back! please enter your details.",
+                text = stringResource(R.string.welcome_back_please_enter_your_details),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.medium))
             )
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = { onUsernameChanged(it) },
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.username)) },
                 placeholder = {
                     Text(
-                        text = "Enter you username",
+                        text = stringResource(R.string.enter_you_username),
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
                 isError = uiState.usernameError != null,
-                supportingText = { uiState.usernameError?.let { Text(it) } }
+                supportingText = { uiState.usernameError?.let { Text(it) } },
+                keyboardOptions = KeyboardOptions(
+                    showKeyboardOnFocus = true,
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                )
             )
             Spacer(modifier = Modifier.padding(8.dp))
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = { onPasswordChanged(it) },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password)) },
                 placeholder = {
                     Text(
-                        text = "Enter you password",
+                        text = stringResource(R.string.enter_you_password),
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
+                supportingText = { uiState.passwordError?.let { Text(it) } },
                 visualTransformation = PasswordVisualTransformation(),
                 isError = uiState.passwordError != null,
-                supportingText = { uiState.passwordError?.let { Text(it) } }
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    showKeyboardOnFocus = true,
+                    keyboardType = KeyboardType.Password
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = { login(uiState.username, uiState.password) }
+                ),
+                singleLine = true
             )
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
             Button(
@@ -157,7 +175,7 @@ private fun LoginCompactScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Login")
+                    Text(stringResource(R.string.login))
                     if (uiState.loading) CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
@@ -169,11 +187,11 @@ private fun LoginCompactScreen(
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "You don't have an account! ",
+                    text = stringResource(R.string.you_don_t_have_an_account),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "Sing up",
+                    text = stringResource(R.string.sing_up),
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Blue,

@@ -6,10 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.example.core.components.BottomNavBar
+import com.example.core.components.TopBar
+import com.example.gymusAndroid.R
 import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
-import com.example.gymusAndroid.core.components.BottomNavBar
-import com.example.gymusAndroid.core.components.TopBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -58,9 +60,9 @@ fun RegisterMembershipCompactScreen(
         topBar = {
             TopBar(
                 onClickLogout = onClickLogout,
-                title = "Register Membership",
+                title = stringResource(R.string.register_membership),
                 navHostController = navController,
-                isActualScreen = false
+                showNavigateUpIcon = true
             )
         },
         bottomBar = {

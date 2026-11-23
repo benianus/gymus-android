@@ -1,13 +1,12 @@
 package com.example.gymusAndroid.dashboard.data.dataSource.remote
 
-import com.example.gymusAndroid.core.dto.ApiResponse
-import com.example.gymusAndroid.core.dto.ApiResponse.Error
-import com.example.gymusAndroid.core.dto.ApiResponse.Success
-import com.example.gymusAndroid.core.dto.ErrorResponseDto
-import com.example.gymusAndroid.core.helpers.BASE_URL
+import com.example.core.dto.ApiResponse
+import com.example.core.dto.Error
+import com.example.core.dto.ErrorResponseDto
+import com.example.core.helpers.BASE_URL
+import com.example.core.helpers.apiResponse
 import com.jetbrains.gymusserverjava.memberships.dtos.responses.RecentMemberChecksInDto
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
@@ -22,13 +21,14 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            when (response.status.value) {
-                in 0 until 300 -> Success(response.body<Success<Int, Nothing>>().data)
-                else -> Error(response.body<Error<Nothing, ErrorResponseDto>>().error)
-            }
+            apiResponse(response)
         } catch (e: Exception) {
             e.printStackTrace()
-            Error(ErrorResponseDto(e.message ?: "unknown error"))
+            Error(
+                ErrorResponseDto(
+                    e.message ?: "unknown error"
+                )
+            )
         }
     }
 
@@ -39,13 +39,14 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            when (response.status.value) {
-                in 0 until 300 -> Success(response.body<Success<Double, Nothing>>().data)
-                else -> Error(response.body<Error<Nothing, ErrorResponseDto>>().error)
-            }
+            apiResponse(response)
         } catch (e: Exception) {
             e.printStackTrace()
-            Error(ErrorResponseDto(e.message ?: "unknown error"))
+            Error(
+                ErrorResponseDto(
+                    e.message ?: "unknown error"
+                )
+            )
         }
     }
 
@@ -56,13 +57,14 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            when (response.status.value) {
-                in 0 until 300 -> Success(response.body<Success<Set<RecentMemberChecksInDto>, Nothing>>().data)
-                else -> Error(response.body<Error<Nothing, ErrorResponseDto>>().error)
-            }
+            apiResponse(response)
         } catch (e: Exception) {
             e.printStackTrace()
-            Error(ErrorResponseDto(e.message ?: "unknown error!"))
+            Error(
+                ErrorResponseDto(
+                    e.message ?: "unknown error!"
+                )
+            )
         }
     }
 }

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -23,16 +25,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.core.components.ErrorMessageDialog
+import com.example.core.navigation.LoginScreen
+import com.example.core.theme.GymusAppTheme
 import com.example.gymusAndroid.R
-import com.example.gymusAndroid.core.components.ShowErrorMessage
-import com.example.gymusAndroid.core.navigation.LoginScreen
-import com.example.gymusAndroid.core.theme.GymusAppTheme
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -46,7 +51,7 @@ fun RegisterRoute(
     val uiState by registerViewModel.uiState.collectAsState()
 
     // show error alert dialog in case registration failed
-    ShowErrorMessage(
+    ErrorMessageDialog(
         error = uiState.error,
         onDismissRequest = registerViewModel::onErrorChanged,
         onConfirmation = registerViewModel::onErrorChanged,
@@ -94,7 +99,7 @@ fun RegisterRoute(
 private fun RegisterCompactScreen(
     navController: NavHostController,
     uiState: RegisterScreenState,
-    register: (String, String) -> Unit,
+    register: (username: String, password: String) -> Unit,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onPasswordConfirmationChanged: (String) -> Unit,
@@ -109,53 +114,75 @@ private fun RegisterCompactScreen(
                 .padding(innerPadding)
         ) {
             Text(
-                text = "Sing up",
+                text = stringResource(R.string.sing_up),
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.medium))
             )
             Text(
-                text = "Welcome! Register a new account.",
+                text = stringResource(R.string.welcome_register_a_new_account),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.medium))
             )
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = { onUsernameChanged(it) },
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.username)) },
                 placeholder = {
                     Text(
-                        text = "Enter you username",
+                        text = stringResource(R.string.enter_you_username),
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
                 isError = uiState.usernameError != null,
-                supportingText = { uiState.usernameError?.let { Text(it) } }
+                supportingText = { uiState.usernameError?.let { Text(it) } },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    showKeyboardOnFocus = true,
+                    keyboardType = KeyboardType.Text
+                )
             )
             Spacer(modifier = Modifier.padding(8.dp))
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = { onPasswordChanged(it) },
-                label = { Text("Password") },
-                placeholder = { Text("Enter you password") },
+                label = { Text(stringResource(R.string.password)) },
+                placeholder = { Text(stringResource(R.string.enter_you_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 isError = uiState.passwordError != null,
-                supportingText = { uiState.passwordError?.let { Text(it) } }
+                supportingText = { uiState.passwordError?.let { Text(it) } },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    showKeyboardOnFocus = true,
+                    keyboardType = KeyboardType.Password
+                )
             )
             Spacer(modifier = Modifier.padding(8.dp))
             OutlinedTextField(
                 value = uiState.passwordConfirmation,
                 onValueChange = { onPasswordConfirmationChanged(it) },
-                label = { Text("Password Confirmation") },
-                placeholder = { Text("Confirm your password") },
+                label = { Text(stringResource(R.string.password_confirmation)) },
+                placeholder = { Text(stringResource(R.string.confirm_your_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 isError = uiState.passwordConfirmationError != null,
                 supportingText = {
-                    uiState.passwordConfirmationError?.let {
-                        Text(
-                            it
+                    uiState.passwordConfirmationError?.let { Text(it) }
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    showKeyboardOnFocus = true,
+                    keyboardType = KeyboardType.Password
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        register(
+                            uiState.username,
+                            uiState.password
                         )
                     }
-                }
+                )
             )
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
             Button(
@@ -167,7 +194,7 @@ private fun RegisterCompactScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Sing up")
+                    Text(stringResource(R.string.sing_up))
                     if (uiState.loading) CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
@@ -179,11 +206,11 @@ private fun RegisterCompactScreen(
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "You Already have an account! ",
+                    text = stringResource(R.string.you_already_have_an_account),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "Login",
+                    text = stringResource(R.string.login),
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = TextDecoration.Underline,
                     color = Color.Blue,

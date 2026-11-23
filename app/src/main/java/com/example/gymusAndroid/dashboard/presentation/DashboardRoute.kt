@@ -2,9 +2,8 @@
 
 package com.example.gymusAndroid.dashboard.presentation
 
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.Row
@@ -14,50 +13,46 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
+import com.example.core.components.BottomNavBar
+import com.example.core.components.TopBar
+import com.example.core.helpers.BASE_URL
+import com.example.core.navigation.MemberCardScreen
+import com.example.core.navigation.MembershipsScreen
+import com.example.core.navigation.ProductsScreen
+import com.example.core.navigation.RegisterMembershipScreen
+import com.example.core.navigation.RegisterSessionScreen
+import com.example.core.navigation.ReportsScreen
+import com.example.core.navigation.SessionsScreen
+import com.example.core.theme.GymusAppTheme
 import com.example.gymusAndroid.R
 import com.example.gymusAndroid.auth.presentation.login.LoginViewModel
-import com.example.gymusAndroid.core.components.BottomNavBar
-import com.example.gymusAndroid.core.components.TopBar
-import com.example.gymusAndroid.core.helpers.BASE_URL
-import com.example.gymusAndroid.core.navigation.DashboardScreen
-import com.example.gymusAndroid.core.navigation.MemberCardScreen
-import com.example.gymusAndroid.core.navigation.MembershipsScreen
-import com.example.gymusAndroid.core.navigation.ProductsScreen
-import com.example.gymusAndroid.core.navigation.RegisterMembershipScreen
-import com.example.gymusAndroid.core.navigation.RegisterSessionScreen
-import com.example.gymusAndroid.core.navigation.ReportsScreen
-import com.example.gymusAndroid.core.navigation.SessionsScreen
-import com.example.gymusAndroid.core.theme.GymusAppTheme
 import com.example.gymusAndroid.dashboard.domain.models.Member
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -76,7 +71,6 @@ fun DashboardRoute(
         WindowWidthSizeClass.Compact -> {
             DashboardCompactScreen(
                 onClickLogout = {
-                    Log.i("logout_ui", "logout succeed")
                     loginViewModel.logout()
                 },
                 navController = navController,
@@ -111,21 +105,19 @@ fun DashboardCompactScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val isDashboardScreen = backStackEntry?.destination
-                                ?.hasRoute<DashboardScreen>() ?: false
     Scaffold(
         topBar = {
             TopBar(
                 onClickLogout = onClickLogout,
                 navHostController = navController,
-                title = "Gymus",
-                isActualScreen = isDashboardScreen
+                title = stringResource(R.string.app_name),
+                showNavigateUpIcon = false
             )
         },
         bottomBar = { BottomNavBar(navController) },
     ) { innerPadding ->
         LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -133,26 +125,23 @@ fun DashboardCompactScreen(
         ) {
             item {
                 Text(
-                    text = "Hello, ${uiState.role}",
+                    text = stringResource(R.string.hello, uiState.role ?: ""),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
             item {
                 Text(
-                    text = "Welcome back to your dashboard today.",
+                    text = stringResource(R.string.welcome_back_to_your_dashboard_today),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
             item {
                 SummaryItems(
                     uiState = uiState,
                     modifier = Modifier
                 )
             }
-            item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
             item { QuickAccessItems(navController = navController) }
-            item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
             item {
                 RecentCheckedInMembers(
                     navHostController = navController,
@@ -160,7 +149,6 @@ fun DashboardCompactScreen(
                     modifier = Modifier
                 )
             }
-            item { Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium))) }
         }
     }
 }
@@ -171,30 +159,29 @@ fun RecentCheckedInMembers(
     members: Set<Member>,
     modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(
+            space = dimensionResource(id = R.dimen.small)
+        )
+    ) {
         Text(
-            text = "Recent check-ins",
+            text = stringResource(R.string.recent_check_ins),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
         if (members.isNotEmpty()) {
             for (member in members) {
                 RecentCheckedMemberItem(
-                    onClickRecentMember = {
-                        navHostController.navigate(MemberCardScreen(it))
+                    onClickRecentMember = { memberId ->
+                        navHostController.navigate(MemberCardScreen(memberId))
                     },
                     member = member,
-                    modifier = Modifier.padding(
-                        bottom = dimensionResource(
-                            R.dimen.small
-                        )
-                    )
+                    modifier = Modifier
                 )
             }
         } else {
             Text(
-                text = "No recent check-ins!",
+                text = stringResource(R.string.no_recent_check_ins),
                 modifier = Modifier
                     .fillMaxWidth(),
             )
@@ -205,25 +192,25 @@ fun RecentCheckedInMembers(
 
 @Composable
 private fun RecentCheckedMemberItem(
-    onClickRecentMember: (Int) -> Unit,
+    onClickRecentMember: (memberId: Int) -> Unit,
     member: Member,
     modifier: Modifier = Modifier,
     imageLoader: ImageLoader = koinInject()
 ) {
-    Card(
-        modifier = modifier.clickable { onClickRecentMember(member.id) },
-        border = BorderStroke(1.dp, Color.LightGray),
-        elevation = CardDefaults.cardElevation(1.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.medium))
-        ) {
+    ListItem(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { onClickRecentMember(member.id) },
+        colors = ListItemDefaults.colors(
+            headlineColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            supportingColor = Color.Gray,
+            trailingIconColor = Color.DarkGray
+        ),
+        leadingContent = {
             AsyncImage(
                 model = "$BASE_URL/files/download/${member.personalPhoto}",
-                contentDescription = "profile photo",
+                contentDescription = stringResource(R.string.profile_photo),
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape),
@@ -232,24 +219,23 @@ private fun RecentCheckedMemberItem(
                 placeholder = painterResource(R.drawable.baseline_data_thresholding_24),
                 error = painterResource(R.drawable.baseline_error_24)
             )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small)))
-            Column(
-                modifier = Modifier.weight(2f),
-            ) {
-                Text(
-                    text = member.fullName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "${member.status} member",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-            Text(text = member.checkedInAt, modifier = Modifier)
-        }
-    }
+        },
+        headlineContent = {
+            Text(
+                text = member.fullName,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        supportingContent = {
+            Text(
+                text = stringResource(R.string.member, member.status),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Normal
+            )
+        },
+        trailingContent = { Text(text = member.checkedInAt) }
+    )
 }
 
 @Composable
@@ -257,15 +243,18 @@ private fun SummaryItems(
     uiState: DashboardScreenState,
     modifier: Modifier = Modifier
 ) {
-    Row {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(
+            space = dimensionResource(R.dimen.medium)
+        )
+    ) {
         SummaryItem(
-            "Active members",
+            stringResource(R.string.active_members),
             "${uiState.activeMembers}",
             Modifier.weight(1f)
         )
-        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
         SummaryItem(
-            "Today's revenue",
+            stringResource(R.string.today_s_revenue),
             "${uiState.todayRevenue}",
             Modifier.weight(1f)
         )
@@ -280,8 +269,6 @@ private fun SummaryItem(
 ) {
     Card(
         modifier = modifier,
-        border = BorderStroke(width = 1.dp, color = Color.LightGray),
-        elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.medium))) {
             Text(
@@ -303,63 +290,83 @@ private fun QuickAccessItems(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(
+            space = dimensionResource(R.dimen.small)
+        ),
+    ) {
         Text(
-            text = "Quick Access",
+            text = stringResource(R.string.quick_access),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(
+                space = dimensionResource(
+                    R.dimen.medium
+                )
+            )
+        ) {
             QuickAccessItem(
-                { navController.navigate(MembershipsScreen) },
+                {
+                    navController.navigate(MembershipsScreen)
+                },
                 R.drawable.baseline_person_24,
-                "Memberships",
-                "memberships",
+                stringResource(R.string.members),
+                stringResource(R.string.memberships),
                 modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
-                { navController.navigate(SessionsScreen) },
+                {
+                    navController.navigate(SessionsScreen)
+                },
                 R.drawable.baseline_access_time_filled_24,
-                "Sessions",
-                "sessions",
+                stringResource(R.string.sessions),
+                stringResource(R.string.sessions),
                 modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(
+                space = dimensionResource(
+                    R.dimen.medium
+                )
+            )
+        ) {
             QuickAccessItem(
                 { navController.navigate(ProductsScreen) },
                 icon = R.drawable.baseline_store_24,
-                title = "Store",
-                contentDescription = "store",
+                title = stringResource(R.string.store),
+                contentDescription = stringResource(R.string.store),
                 modifier = modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
                 { navController.navigate(ReportsScreen) },
                 R.drawable.baseline_assessment_24,
-                "Reports",
-                "reports",
+                stringResource(R.string.reports),
+                stringResource(R.string.reports),
                 modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.medium)))
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(
+                space = dimensionResource(
+                    R.dimen.medium
+                )
+            )
+        ) {
             QuickAccessItem(
                 { navController.navigate(RegisterMembershipScreen) },
                 icon = R.drawable.baseline_person_add_24,
-                title = "Register member",
-                contentDescription = "register member",
+                title = stringResource(R.string.register_member),
+                contentDescription = stringResource(R.string.register_member),
                 modifier = modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.medium)))
             QuickAccessItem(
                 { navController.navigate(RegisterSessionScreen) },
                 R.drawable.baseline_more_time_24,
-                "Register session",
-                "register session",
+                stringResource(R.string.register_session),
+                stringResource(R.string.register_session),
                 modifier.weight(1f)
             )
         }
@@ -376,8 +383,6 @@ private fun QuickAccessItem(
 ) {
     Card(
         modifier = modifier.clickable { navigateTo() },
-        border = BorderStroke(1.dp, Color.LightGray),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.medium))) {
             Icon(

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.room.ksp) apply false
     alias(libs.plugins.androidx.room) apply false
     alias(libs.plugins.koin.compiler) apply false
+    alias(libs.plugins.hotswan.compiler) apply false
 }
 
 buildscript {

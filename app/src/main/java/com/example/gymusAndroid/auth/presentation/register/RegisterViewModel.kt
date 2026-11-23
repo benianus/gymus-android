@@ -2,9 +2,10 @@ package com.example.gymusAndroid.auth.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.dto.Error
+import com.example.core.dto.Success
 import com.example.gymusAndroid.auth.domain.model.User
 import com.example.gymusAndroid.auth.domain.useCases.RegisterUseCase
-import com.example.gymusAndroid.core.dto.ApiResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -161,7 +162,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
             )
 
             when (result) {
-                is ApiResponse.Error -> {
+                is Error -> {
                     uiState.update {
                         it.copy(
                             loading = false,
@@ -170,7 +171,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
                     }
                 }
 
-                is ApiResponse.Success -> {
+                is Success -> {
                     uiState.update {
                         it.copy(
                             loading = false,

@@ -8,9 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.gymusAndroid.core.navigation.AppNavHost
-import com.example.gymusAndroid.core.theme.GymusAppTheme
+import com.example.core.navigation.AppNavHost
+import com.example.core.theme.GymusAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +23,9 @@ class MainActivity : ComponentActivity() {
                         calculateWindowSizeClass(this).widthSizeClass
                 val navController = rememberNavController()
                 AppNavHost(
-                    navController = navController,
-                    widthSizeClass = widthSizeClass
+                    navHostController = navController,
+                    windowWidthSizeClass = widthSizeClass,
+                    modifier = Modifier
                 )
             }
         }
