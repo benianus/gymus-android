@@ -6,7 +6,7 @@ import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.
 import com.example.gymusAndroid.membership.domain.repostories.MembershipRepository
 
 class RegisterMemberUseCase(private val membershipRepository: MembershipRepository) {
-    suspend operator fun invoke(): ApiResponse<Unit, ErrorResponseDto> {
+    suspend operator fun invoke(): ApiResponse<String, ErrorResponseDto> {
         return membershipRepository.registerMember(
             MemberRegisterRequestDto(
                 firstName = TODO(),

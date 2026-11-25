@@ -37,15 +37,15 @@ class MembershipRepositoryImpl(
         )
     }
 
-    override suspend fun registerMember(memberRegisterRequestDto: MemberRegisterRequestDto): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun registerMember(memberRegisterRequestDto: MemberRegisterRequestDto): ApiResponse<String, ErrorResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun recordAttendance(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun recordAttendance(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return membershipApiService.recordAttendance(memberId)
     }
 
-    override suspend fun renewMembership(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun renewMembership(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return membershipApiService.renewMembership(memberId)
     }
 
@@ -65,11 +65,14 @@ class MembershipRepositoryImpl(
     override suspend fun updateMember(
         memberId: Int,
         memberUpdateRequestDto: MemberUpdateRequestDto
-    ): ApiResponse<Unit, ErrorResponseDto> {
-        TODO("Not yet implemented")
+    ): ApiResponse<String, ErrorResponseDto> {
+        return membershipApiService.updateMember(
+            memberId,
+            memberUpdateRequestDto
+        )
     }
 
-    override suspend fun deleteMember(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun deleteMember(memberId: Int): ApiResponse<String, ErrorResponseDto> {
+        return membershipApiService.deleteMember(memberId)
     }
 }

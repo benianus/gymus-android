@@ -6,14 +6,18 @@ import com.example.gymusAndroid.membership.data.dataSource.remote.dtos.requests.
 import com.example.gymusAndroid.membership.domain.repostories.MembershipRepository
 
 class UpdateMembershipUseCase(private val membershipRepository: MembershipRepository) {
-    suspend operator fun invoke(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    suspend operator fun invoke(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return membershipRepository.updateMember(
             memberId,
             MemberUpdateRequestDto(
-                phoneNumber = TODO(),
                 email = TODO(),
+                phoneNumber = TODO(),
                 address = TODO(),
-                personalPhoto = TODO()
+                medicalCertificate = TODO(),
+                birthCertificate = TODO(),
+                personalPhoto = TODO(),
+                parentalAuthorization = TODO(),
+                membershipType = TODO()
             )
         )
     }

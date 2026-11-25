@@ -21,7 +21,7 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            apiResponse(response)
+            apiResponse<Int, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -39,7 +39,7 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            apiResponse(response)
+            apiResponse<Double, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -57,7 +57,7 @@ class DashboardApiServiceImpl(
                         contentType(ContentType.Application.Json)
                     }
 
-            apiResponse(response)
+            apiResponse<Set<RecentMemberChecksInDto>, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(

@@ -17,15 +17,15 @@ interface MembershipRepository {
 
     suspend fun registerMember(
         memberRegisterRequestDto: MemberRegisterRequestDto
-    ): ApiResponse<Unit, ErrorResponseDto>
+    ): ApiResponse<String, ErrorResponseDto>
 
-    suspend fun recordAttendance(memberId: Int): ApiResponse<Unit, ErrorResponseDto>
-    suspend fun renewMembership(memberId: Int): ApiResponse<Unit, ErrorResponseDto>
+    suspend fun recordAttendance(memberId: Int): ApiResponse<String, ErrorResponseDto>
+    suspend fun renewMembership(memberId: Int): ApiResponse<String, ErrorResponseDto>
     suspend fun findMemberCard(memberId: Int): ApiResponse<MemberCard?, ErrorResponseDto>
     suspend fun updateMember(
         memberId: Int,
         memberUpdateRequestDto: MemberUpdateRequestDto
-    ): ApiResponse<Unit, ErrorResponseDto>
+    ): ApiResponse<String, ErrorResponseDto>
 
-    suspend fun deleteMember(memberId: Int): ApiResponse<Unit, ErrorResponseDto>
+    suspend fun deleteMember(memberId: Int): ApiResponse<String, ErrorResponseDto>
 }

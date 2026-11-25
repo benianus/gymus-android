@@ -5,7 +5,7 @@ import com.example.core.dto.ErrorResponseDto
 import com.example.gymusAndroid.membership.domain.repostories.MembershipRepository
 
 class RenewMembershipUseCase(private val membershipRepository: MembershipRepository) {
-    suspend operator fun invoke(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    suspend operator fun invoke(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return membershipRepository.renewMembership(memberId)
     }
 }

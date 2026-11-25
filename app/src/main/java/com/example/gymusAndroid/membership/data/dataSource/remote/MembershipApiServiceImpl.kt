@@ -35,7 +35,9 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
                     httpClient.get("$BASE_URL/members?page=$page&pageSize=$pageSize") {
                         contentType(ContentType.Application.Json)
                     }
-            apiResponse(response)
+            apiResponse<PagedResponse<List<MemberResponseDto>>, ErrorResponseDto>(
+                response
+            )
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -48,7 +50,7 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
 
     override suspend fun registerMember(
         memberRegisterRequestDto: MemberRegisterRequestDto
-    ): ApiResponse<Unit, ErrorResponseDto> {
+    ): ApiResponse<String, ErrorResponseDto> {
         return try {
             val response = httpClient.post("$BASE_URL/members") {
                 contentType(ContentType.MultiPart.FormData)
@@ -97,7 +99,7 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
                     )
                 )
             }
-            apiResponse(response)
+            apiResponse<String, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -108,11 +110,12 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun recordAttendance(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun recordAttendance(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return try {
-            val response =
-                    httpClient.post("$BASE_URL/members/record/${memberId}/attendance")
-            apiResponse(response)
+            val response = httpClient.post(
+                urlString = "$BASE_URL/members/record/${memberId}/attendance"
+            )
+            apiResponse<String, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -123,11 +126,11 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun renewMembership(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun renewMembership(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return try {
             val response =
                     httpClient.post("$BASE_URL/members/${memberId}/renew")
-            apiResponse(response)
+            apiResponse<String, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -159,12 +162,12 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
     override suspend fun updateMember(
         memberId: Int,
         memberUpdateRequestDto: MemberUpdateRequestDto
-    ): ApiResponse<Unit, ErrorResponseDto> {
+    ): ApiResponse<String, ErrorResponseDto> {
         return try {
             val response = httpClient.put("$BASE_URL/members/$memberId") {
                 setBody(memberUpdateRequestDto)
             }
-            apiResponse(response)
+            apiResponse<String, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -175,10 +178,10 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun deleteMember(memberId: Int): ApiResponse<Unit, ErrorResponseDto> {
+    override suspend fun deleteMember(memberId: Int): ApiResponse<String, ErrorResponseDto> {
         return try {
             val response = httpClient.delete("$BASE_URL/members/$memberId")
-            apiResponse(response)
+            apiResponse<String, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error<Nothing, ErrorResponseDto>(
@@ -190,3 +193,4 @@ class MembershipApiServiceImpl(val httpClient: HttpClient) :
     }
 
 }
+

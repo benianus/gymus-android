@@ -5,10 +5,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemberUpdateRequestDto(
+    val email: String,
     @SerialName("phone_number")
     val phoneNumber: String,
-    val email: String,
     val address: String,
+    @SerialName("medical_certificate")
+    val medicalCertificate: String,
+    @SerialName("birth_certificate")
+    val birthCertificate: String,
     @SerialName("personal_photo")
-    val personalPhoto: String
+    val personalPhoto: String,
+    @SerialName("parental_authorization")
+    val parentalAuthorization: String?,
+    @SerialName("membership_type")
+    val membershipType: String
 )

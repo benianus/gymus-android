@@ -34,7 +34,7 @@ class UserApiServiceImpl(
                         contentType(ContentType.Application.Json)
                         setBody(loginRequestDto)
                     }
-            apiResponse(response)
+            apiResponse<AuthResponseDto, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
@@ -55,7 +55,7 @@ class UserApiServiceImpl(
                         setBody(registerRequestDto)
                     }
 
-            apiResponse(response)
+            apiResponse<AuthResponseDto, ErrorResponseDto>(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Error(
