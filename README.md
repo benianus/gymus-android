@@ -13,12 +13,12 @@ Gymus is a gym management system app for mobile android devices.
 
 ### Vertical Slicing per feature with (MVVM Model View ViewModel):
 
-* Feature Auth: Data, Domain, Presentation
-* Feature Dashboard: Data, Domain, Presentation
-* Feature Memberships: Data, Domain, Presentation
-* Feature Sessions: Data, Domain, Presentation
-* Feature Store: Data, Domain, Presentation
-* Feature Reports: Data, Domain, Presentation
+* Auth: Data, Domain, Presentation
+* Dashboard: Data, Domain, Presentation
+* Memberships: Data, Domain, Presentation
+* Sessions: Data, Domain, Presentation
+* Store: Data, Domain, Presentation
+* Reports: Data, Domain, Presentation
 
 ## Tech stack:
 
