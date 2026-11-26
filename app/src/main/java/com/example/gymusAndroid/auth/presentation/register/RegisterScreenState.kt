@@ -3,15 +3,15 @@ package com.example.gymusAndroid.auth.presentation.register
 import com.example.gymusAndroid.auth.domain.model.User
 
 data class RegisterScreenState(
-    var user: User? = null,
-    var username: String = "",
-    var usernameError: String? = null,
-    var password: String = "",
-    var passwordError: String? = null,
-    var passwordConfirmation: String = "",
-    var passwordConfirmationError: String? = null,
-    var loading: Boolean = false,
-    var error: String? = null
+    val user: User? = null,
+    val username: String = "",
+    val usernameError: String? = null,
+    val password: String = "",
+    val passwordError: String? = null,
+    val passwordConfirmation: String = "",
+    val passwordConfirmationError: String? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
 ) {
     val isFormValid =
             username.isNotBlank() &&

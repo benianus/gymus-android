@@ -188,14 +188,14 @@ private fun RegisterCompactScreen(
             Button(
                 onClick = { register(uiState.username, uiState.password) },
                 shape = MaterialTheme.shapes.medium,
-                enabled = uiState.isFormValid
+                enabled = uiState.isFormValid && !uiState.isLoading
             ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(stringResource(R.string.sing_up))
-                    if (uiState.loading) CircularProgressIndicator(
+                    if (uiState.isLoading) CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .size(dimensionResource(R.dimen.large))

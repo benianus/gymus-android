@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.core.components.ErrorMessageDialog
+import com.example.core.components.ShowProgressIndicator
 import com.example.core.navigation.RegisterScreen
 import com.example.core.theme.GymusAppTheme
 import com.example.gymusAndroid.R
@@ -103,7 +103,6 @@ private fun LoginCompactScreen(
     login: (username: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Scaffold { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -169,18 +168,22 @@ private fun LoginCompactScreen(
                 onClick = { login(uiState.username, uiState.password) },
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                enabled = uiState.isFormValid
+                enabled = uiState.isFormValid && !uiState.isLoading
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        dimensionResource(R.dimen.medium),
+                        Alignment.CenterHorizontally
+                    ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(stringResource(R.string.login))
-                    if (uiState.loading) CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
+                    ShowProgressIndicator(
+                        isLoading = uiState.isLoading,
                         modifier = Modifier
                             .size(dimensionResource(R.dimen.large))
                             .padding(start = dimensionResource(R.dimen.medium)),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -205,6 +208,7 @@ private fun LoginCompactScreen(
         }
     }
 }
+
 
 @Composable
 fun LoginMediumScreen(

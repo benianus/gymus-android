@@ -7,7 +7,6 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.koin.compiler)
     alias(libs.plugins.hotswan.compiler)
-//    2.4.21
 }
 
 android {
@@ -152,3 +151,4 @@ configurations.all {
 koinCompiler {
     compileSafety = false
 }
+

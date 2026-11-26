@@ -1,11 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalGridApi::class)
-
 package com.example.gymusAndroid.dashboard.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -41,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import com.example.core.components.BottomNavBar
+import com.example.core.components.ShowProgressIndicator
 import com.example.core.components.TopBar
 import com.example.core.helpers.BASE_URL
 import com.example.core.navigation.MemberCardScreen
@@ -66,6 +63,7 @@ fun DashboardRoute(
     loginViewModel: LoginViewModel = koinViewModel()
 ) {
     val uiState = dashboardViewModel.uiState.collectAsState().value
+
 
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -124,9 +122,16 @@ fun DashboardCompactScreen(
                 .padding(horizontal = dimensionResource(R.dimen.medium))
         ) {
             item {
+                ShowProgressIndicator(
+                    isLoading = uiState.isLoading,
+                    modifier = Modifier.size(dimensionResource(R.dimen.large)),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+            item {
                 Text(
                     text = stringResource(R.string.hello, uiState.role ?: ""),
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.headlineLarge,
                 )
             }
             item {

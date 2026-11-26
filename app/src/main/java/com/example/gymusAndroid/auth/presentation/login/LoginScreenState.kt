@@ -8,7 +8,7 @@ data class LoginScreenState(
     val usernameError: String? = null,
     val password: String = "",
     val passwordError: String? = null,
-    val loading: Boolean = false,
+    val isLoading: Boolean = false,
     val error: String? = null
 ) {
     val isFormValid: Boolean =

@@ -36,7 +36,7 @@ class LoginViewModel(
             CoroutineExceptionHandler { _, throwable ->
                 uiState.update {
                     it.copy(
-                        loading = false,
+                        isLoading = false,
                         error = throwable.message ?: "Unknown Message"
                     )
                 }
@@ -97,7 +97,7 @@ class LoginViewModel(
     fun login(username: String, password: String) {
         uiState.update {
             it.copy(
-                loading = true,
+                isLoading = true,
                 error = null
             )
         }
@@ -118,7 +118,7 @@ class LoginViewModel(
                 is Error -> {
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = result.error.message
                         )
                     }
@@ -127,7 +127,7 @@ class LoginViewModel(
                 is Success -> {
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = null,
                         )
                     }
@@ -141,7 +141,7 @@ class LoginViewModel(
 
         uiState.update {
             it.copy(
-                loading = true,
+                isLoading = true,
                 error = null
             )
         }
@@ -152,7 +152,7 @@ class LoginViewModel(
                     Log.i("logout_viewmodel_error", "logout succeed")
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = result.error.message
                         )
                     }
@@ -162,7 +162,7 @@ class LoginViewModel(
                     Log.i("logout_viewmodel_success", "logout succeed")
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = result.data
                         )
                     }

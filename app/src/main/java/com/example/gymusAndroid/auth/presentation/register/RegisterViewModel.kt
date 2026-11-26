@@ -24,7 +24,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
             CoroutineExceptionHandler { _, throwable ->
                 uiState.update {
                     it.copy(
-                        loading = false,
+                        isLoading = false,
                         error = throwable.message
                     )
                 }
@@ -145,7 +145,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
     fun register(username: String, password: String) {
         uiState.update {
             it.copy(
-                loading = true
+                isLoading = true
             )
         }
 
@@ -165,7 +165,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
                 is Error -> {
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = result.error.message
                         )
                     }
@@ -174,7 +174,7 @@ class RegisterViewModel(private val registerUseCase: RegisterUseCase) :
                 is Success -> {
                     uiState.update {
                         it.copy(
-                            loading = false,
+                            isLoading = false,
                             error = null
                         )
                     }

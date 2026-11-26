@@ -36,6 +36,11 @@ class DashboardViewModel(
     }
 
     init {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             getRole()
             getActiveMembers()
@@ -45,21 +50,20 @@ class DashboardViewModel(
     }
 
     suspend fun getRole() {
-        try {
-            uiState.update {
-                it.copy(
-                    role = authDataStore.role.first(),
-                    isLoading = false,
-                    error = null
-                )
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
+        uiState.update {
+            it.copy(
+                role = authDataStore.role.first(),
+                error = null
+            )
         }
     }
 
     suspend fun getActiveMembers() {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
         when (val result = activeMembersUseCase()) {
             is Error -> {
                 uiState.update {
@@ -84,6 +88,11 @@ class DashboardViewModel(
     }
 
     suspend fun getRecentChecksInMembers() {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
         when (val result = recentCheckInsUseCase()) {
             is Error -> {
                 Log.e("RECENT_CHECK_IN_ERROR", result.error.message)
@@ -109,6 +118,11 @@ class DashboardViewModel(
     }
 
     suspend fun getTodaysRevenue() {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
         when (val result = todaysRevenueUseCase()) {
             is Error -> {
                 uiState.update {

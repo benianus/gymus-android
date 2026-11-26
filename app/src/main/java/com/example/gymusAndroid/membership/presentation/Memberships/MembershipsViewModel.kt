@@ -1,6 +1,5 @@
 package com.example.gymusAndroid.membership.presentation.Memberships
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.dto.Error
@@ -39,7 +38,6 @@ class MembershipsViewModel(
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (val result = findAllMembersUseCase()) {
                 is Error -> {
-                    Log.e("members_data_error", result.error.toString())
                     uiState.update {
                         it.copy(
                             isLoading = false,
@@ -49,7 +47,6 @@ class MembershipsViewModel(
                 }
 
                 is Success -> {
-                    Log.e("members_data_success", result.data.toString())
                     uiState.update {
                         it.copy(
                             members = result.data,

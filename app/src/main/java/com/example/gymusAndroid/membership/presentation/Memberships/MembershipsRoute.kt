@@ -41,6 +41,7 @@ import androidx.paging.compose.itemKey
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import com.example.core.components.BottomNavBar
+import com.example.core.components.ShowProgressIndicator
 import com.example.core.components.TopBar
 import com.example.core.helpers.BASE_URL
 import com.example.core.navigation.MemberCardScreen
@@ -68,6 +69,7 @@ fun MembershipsRoute(
     when (widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             MembershipsCompactScreen(
+                isLoading = uiState.isLoading,
                 onClickLogout = loginViewModel::logout,
                 members = uiState.members,
                 modifier = Modifier,
@@ -88,11 +90,12 @@ fun MembershipsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MembershipsCompactScreen(
+    isLoading: Boolean,
     members: Flow<PagingData<Member>>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onClickLogout: () -> Unit,
-    imageLoader: ImageLoader = koinInject()
+    imageLoader: ImageLoader = koinInject(),
 ) {
     val lazyMembersItems = members.collectAsLazyPagingItems()
 
@@ -128,6 +131,13 @@ fun MembershipsCompactScreen(
         LazyColumn(
             contentPadding = innerPadding,
         ) {
+            item {
+                ShowProgressIndicator(
+                    isLoading = isLoading,
+                    modifier = Modifier.size(dimensionResource(R.dimen.large)),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             items(
                 count = lazyMembersItems.itemCount,
                 key = lazyMembersItems.itemKey { it.id }
@@ -235,9 +245,10 @@ fun MembershipsExpandedScreen() {
 fun MembershipsCompactScreenPreview() {
     GymusAppTheme {
         MembershipsCompactScreen(
+            isLoading = false,
             members = emptyFlow(),
             navController = rememberNavController(),
-            onClickLogout = {},
+            onClickLogout = {}
         )
     }
 }
