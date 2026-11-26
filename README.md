@@ -50,13 +50,13 @@ Gymus is a gym management system app for mobile android devices.
 
 ## Features
 
-1. [ ] Login user
-2. [ ] Signup user
-3. [ ] Show Active Members
-4. [ ] Show Total revenue
-5. [ ] Show recent checks in members
-6. [ ] Show Members
-7. [ ] Show Member Card
+1. [x] Login user
+2. [x] Signup user
+3. [x] Show Active Members
+4. [x] Show Total revenue
+5. [x] Show recent checks in members
+6. [x] Show Members
+7. [x] Show Member Card
 8. [ ] Register New Member
 9. [ ] Member Checks in
 10. [ ] Renew Membership
